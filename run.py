@@ -40,11 +40,13 @@ def display_header(worksheet):
 
 def get_planned_sales_data():
     """
-    Get planned sales figures input from the user.
-    Run a while loop to collect a valid string of data from the user
-    via the terminal, which must be a string of 5 numbers separated
-    by commas. The loop will repeatedly request data until it is valid.
+    Get planned sales figures input from the user and update ths" sheet.
+    Collect a valid string of data from the user via the terminastring
+    of 5 numbers separated by commas. The function will inseto the sheet
+    in the second row, preserving the header names in the first row.
     """
+    planned_sales_sheet = SHEET.worksheet("planned_sales")
+
     while True:
         print("Please enter planned sales for next 4 weeks/months.")
         print("Data should be five numbers, separated by commas.")
@@ -55,7 +57,9 @@ def get_planned_sales_data():
         planned_sales_data = data_str.split(",")
 
         if validate_data(planned_sales_data):
-            print("Planned data is updated!")
+            planned_sales_data = [int(value) for value in planned_sales_data]
+            planned_sales_sheet.insert_rows([planned_sales_data], 2)
+            print("Planned data is updated in the 'planned_sales' sheet!")
             break
 
     return planned_sales_data
@@ -191,6 +195,7 @@ def main():
     """
     display_header(SHEET.worksheet("sales"))
     planned_sales_data = get_planned_sales_data()
+    update_worksheet(planned_sales_data, "planned_sales")
     critical = critical_level()
     data = get_sales_data()
     sales_data = [int(num) for num in data]
