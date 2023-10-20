@@ -13,6 +13,31 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('balance_cost')
 
 
+def display_header(worksheet):
+    """
+    Update the header (first row) of the specified worksheet header.
+    """
+    header = worksheet.row_values(1)
+    print("Default item names:", header)
+
+    if not header:
+        print("Provide 5 comma-separated item names")
+        print("Example: Item1, Item2, Item3, Item4, Item5")
+
+        # Capture user input to update the header names
+        new_header = input("Enter the 5 comma-separated item names:\n")
+        header = new_header.split(",")  # Split user input by commas
+
+        # Update the header in the worksheet
+        worksheet.update('A1', [header])  # Note the list inside a list
+
+        print("Updated header names:", header)
+    else:
+        print("Header already exists. If you want to update it")
+
+    print("This code always runs.")
+
+
 def get_sales_data():
     """
     Get sales figures input from the user.
@@ -44,9 +69,9 @@ def validate_data(values):
     """
     try:
         [int(value) for value in values]
-        if len(values) != 6:
+        if len(values) != 5:
             raise ValueError(
-                f"Exactly 6 values required, you provided {len(values)}")
+                f"Exactly 5 values required, you provided {len(values)}")
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
         return False
@@ -94,9 +119,9 @@ def get_last_5_entries_sales():
     sales = SHEET.worksheet("sales")
 
     columns = []
-    for ind in range(1, 7):
+    for ind in range(1, 6):
         column = sales.col_values(ind)
-        columns.append(column[-5:])
+        columns.append(column[-1:])
 
     return columns
 
@@ -121,6 +146,7 @@ def main():
     """
     Run all program functions
     """
+    display_header(SHEET.worksheet("sales"))
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
@@ -131,5 +157,5 @@ def main():
     update_worksheet(stock_data, "stock")
 
 
-print("Welcome to Love Sandwiches Data Automation")
+print("BALANCE STOCK TESTER")
 main()
