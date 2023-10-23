@@ -39,16 +39,10 @@ def display_header(worksheet):
 
 
 def get_planned_sales_data():
-    """
-    Get planned sales figures input from the user and update ths" sheet.
-    Collect a valid string of data from the user via the terminastring
-    of 5 numbers separated by commas. The function will inseto the sheet
-    in the second row, preserving the header names in the first row.
-    """
     planned_sales_sheet = SHEET.worksheet("planned_sales")
 
     while True:
-        print("Please enter planned sales for next 4 weeks/months.")
+        print("Please enter planned sales for the next 4 weeks/months.")
         print("Data should be five numbers, separated by commas.")
         print("Example: 1000,200,30,400,50\n")
 
@@ -58,31 +52,60 @@ def get_planned_sales_data():
 
         if validate_data(planned_sales_data):
             planned_sales_data = [int(value) for value in planned_sales_data]
-            planned_sales_sheet.insert_rows([planned_sales_data], 2)
-            print("Planned data is updated in the 'planned_sales' sheet!")
+            existing_data = planned_sales_sheet.get_all_values()
+
+            # Check if the data already exists in the sheet
+            if planned_sales_data not in existing_data:
+                # Append the new data as a new row in the sheet
+                planned_sales_sheet.append_rows([planned_sales_data])
+                print("Planned data is updated in the 'planned_sales' sheet!")
+            else:
+                print("Data already exists in the sheet. Not adding again.")
+
             break
 
     return planned_sales_data
 
 
-def critical_level():
+def get_critical_level():
     """
-    Get a critical level input from the user.
+    Get critical level data input from the user.
     Run a while loop to collect a valid integer value from the user
-    via the terminal, which must be between 1 and 50.
+    via the terminal, which must be between 1 and 50. Store the value
+    in the critical_level vari it into the "critical_level" sheet.
     """
+    critical_level_sheet = SHEET.worksheet("critical_level")
+    critical_level_data = []
+
     while True:
         print("Please enter the critical level (a number between 1 and 50):")
+        print("Example: 1, 10, 25, 35\n")
 
-        try:
-            critical_value = int(input("Enter your critical level here: "))
-            if 1 <= critical_value <= 50:
-                print("Critical level entered by the user:", critical_value)
-                return critical_value
-            else:
-                print("Critical level must be 1 and 50. Please try again.")
-        except ValueError:
-            print("Invalid inpu, whole number between 1 and 50.")
+        data_str = input("Enter your critical level here:\n ")
+
+        if validate_critical_level_data(data_str):
+            critical_level_data = [int(data_str)] * 5  # Repeat the vames
+            critical_level_sheet.insert_rows([critical_level_data], 2)
+            print("Critical level datin the 'critical_level' sheet!")
+            break
+
+    return critical_level_data
+
+
+def validate_critical_level_data(value):
+    """
+    Validate the entered critical level value.
+    Ensure that it's an integer between 1 and 50.
+    """
+    try:
+        int_value = int(value)
+        if not (1 <= int_value <= 50):
+            raise ValueError("Critical level must be between 1 - 50.")
+    except ValueError as e:
+        print(f"Invalid critical level data: {e}, please try again.\n")
+        return False
+
+    return True
 
 
 def get_sales_data():
@@ -175,16 +198,19 @@ def get_last_5_entries_sales():
 
 def calculate_stock_data(data):
     """
-    Calculate the average stock for each item type, adding 10%
+    Calculate stock as latest stock minus latest sales.
     """
     print("Calculating stock data...\n")
-    new_stock_data = []
+    stock = SHEET.worksheet("stock").get_all_values()
+    sales = SHEET.worksheet("sales").get_all_values()
 
-    for column in data:
-        int_column = [int(num) for num in column]
-        average = sum(int_column) / len(int_column)
-        stock_num = average * 1.1
-        new_stock_data.append(round(stock_num))
+    latest_stock = [int(value) for value in stock[-1]]
+    latest_sales = [int(value) for value in sales[-1]]
+
+    new_stock_data = [
+        stock - sales
+        for stock, sales in zip(latest_stock, latest_sales)
+    ]
 
     return new_stock_data
 
@@ -193,10 +219,10 @@ def main():
     """
     Run all program functions
     """
+    critical_level = get_critical_level()
     display_header(SHEET.worksheet("sales"))
     planned_sales_data = get_planned_sales_data()
     update_worksheet(planned_sales_data, "planned_sales")
-    critical = critical_level()
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
@@ -208,4 +234,6 @@ def main():
 
 
 print("BALANCE STOCK TESTER")
+
+
 main()
