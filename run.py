@@ -177,6 +177,11 @@ def calculate_surplus_data(sales_row):
         surplus = int(stock) - sales
         surplus_data.append(surplus)
 
+        if surplus < 0:
+            print("Too low")
+        else:
+            print("OK")
+
     return surplus_data
 
 
