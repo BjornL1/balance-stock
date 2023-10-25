@@ -40,53 +40,42 @@ def display_header(worksheet):
 
 def get_planned_sales_data():
     planned_sales_sheet = SHEET.worksheet("planned_sales")
+    surplus_sheet = SHEET.worksheet("surplus")
 
-    while True:
-        print("Please enter planned sales for the next 4 weeks/months.")
-        print("Data should be five numbers, separated by commas.")
-        print("Example: 1000,200,30,400,50\n")
+    planned_values = []  # Initialize an empty list to store planned values
 
-        data_str = input("Enter your data here:\n")
+    # Loop through columns A to E
+    for col in range(1, 6):
+        # Get the value from surplus sheet
+        value = surplus_sheet.cell(2, col).value
+        planned_values.append(value)  # Add the value to the list
+        # Copy the value to planned_sales sheet
+        planned_sales_sheet.update_cell(2, col, value)
 
-        planned_sales_data = data_str.split(",")
-
-        if validate_data(planned_sales_data):
-            planned_sales_data = [int(value) for value in planned_sales_data]
-            existing_data = planned_sales_sheet.get_all_values()
-
-            # Check if the data already exists in the sheet
-            if planned_sales_data not in existing_data:
-                # Append the new data as a new row in the sheet
-                planned_sales_sheet.append_rows([planned_sales_data])
-                print("Planned data is updated in the 'planned_sales' sheet!")
-            else:
-                print("Data already exists in the sheet. Not adding again.")
-
-            break
-
-    return planned_sales_data
+    return planned_values  # Return the list of planned values
 
 
 def get_critical_level():
     """
     Get critical level data input from the user.
-    Run a while loop to collect a valid integer value from the user
-    via the terminal, which must be between 1 and 50. Store the value
-    in the critical_level vari it into the "critical_level" sheet.
+    Run a while loop id floating-point value from the user
+    via the terminal. Store the value in the "critical_level" sheet.
     """
     critical_level_sheet = SHEET.worksheet("critical_level")
     critical_level_data = []
 
     while True:
         print("Please enter the critical level (a number between 1 and 50):")
-        print("Example: 1, 10, 25, 35\n")
+        print("Example: 1.05, 10.0, 25.5, 35.5\n")
 
         data_str = input("Enter your critical level here:\n ")
 
         if validate_critical_level_data(data_str):
-            critical_level_data = [int(data_str)] * 5  # Repeat the vames
+            # Convert the input to a floating-point number
+            adjusted_value = float(data_str)
+            critical_level_data = [adjusted_value] * 5  # Repeat the values
             critical_level_sheet.insert_rows([critical_level_data], 2)
-            print("Critical level datin the 'critical_level' sheet!")
+            print("Critical level data in the 'critical_level' sheet!")
             break
 
     return critical_level_data
@@ -178,9 +167,9 @@ def calculate_surplus_data(sales_row):
         surplus_data.append(surplus)
 
         if surplus < 0:
-            print("Too low")
+            print(f"Too low   {surplus}")
         else:
-            print("OK")
+            print(f"OK   {surplus}")
 
     return surplus_data
 
@@ -203,17 +192,23 @@ def get_last_5_entries_sales():
 
 def calculate_stock_data(data):
     """
-    Calculate stock as latest stock minus latest sales.
+    Calculate stock as the latest stock minus the latest sales.
+    If the result is negative, adjust it to be the equiv by thical level value.
     """
     print("Calculating stock data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
     sales = SHEET.worksheet("sales").get_all_values()
 
-    latest_stock = [int(value) for value in stock[-1]]
-    latest_sales = [int(value) for value in sales[-1]]
+    latest_stock = [int(value.replace(',', '')) for value in stock[-1]]
+    latest_sales = [int(value.replace(',', '')) for value in sales[-1]]
+
+    # Get the critical level value from cell A2 in the "critical_level" sheet
+    critical_level_cell = SHEET.worksheet("critical_level").acell('A2')
+    critical_level_value = int(critical_level_cell.value) / 100
 
     new_stock_data = [
-        stock - sales
+        (stock - sales) if stock - sales >= 0 else
+        (-stock + sales) * critical_level_value
         for stock, sales in zip(latest_stock, latest_sales)
     ]
 
@@ -226,8 +221,6 @@ def main():
     """
     critical_level = get_critical_level()
     display_header(SHEET.worksheet("sales"))
-    planned_sales_data = get_planned_sales_data()
-    update_worksheet(planned_sales_data, "planned_sales")
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
@@ -236,6 +229,8 @@ def main():
     sales_columns = get_last_5_entries_sales()
     stock_data = calculate_stock_data(sales_columns)
     update_worksheet(stock_data, "stock")
+    planned_sales_data = get_planned_sales_data()
+    update_worksheet(planned_sales_data, "planned_sales")
 
 
 print("BALANCE STOCK TESTER")
