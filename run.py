@@ -41,16 +41,26 @@ def display_header(worksheet):
 def get_planned_sales_data():
     planned_sales_sheet = SHEET.worksheet("planned_sales")
     surplus_sheet = SHEET.worksheet("surplus")
+    stock_sheet = SHEET.worksheet("stock")
 
     planned_values = []  # Initialize an empty list to store planned values
 
-    # Loop through columns A to E
     for col in range(1, 6):
-        # Get the value from surplus sheet
-        value = surplus_sheet.cell(2, col).value
-        planned_values.append(value)  # Add the value to the list
-        # Copy the value to planned_sales sheet
-        planned_sales_sheet.update_cell(2, col, value)
+        # Get the latest value from surplus and stock sheets for column col
+        surplus_value = float(
+            surplus_sheet.col_values(col)[-1]
+            .replace(',', '', 1)
+        )
+        stock_value = float(stock_sheet.col_values(col)[-1]
+                            .replace(',', '', 1))
+
+        # Calculate the planned value by adding surplus and stock values
+        planned_value = stock_value - surplus_value
+
+        planned_values.append(planned_value)
+
+    # Append the new data to the planned_sales worksheet
+    planned_sales_sheet.append_rows([planned_values])
 
     return planned_values  # Return the list of planned values
 
@@ -143,10 +153,13 @@ def update_worksheet(data, worksheet):
     Receives a list of integers to be inserted into a worksheet
     Update the relevant worksheet with the data provided
     """
-    print(f"Updating {worksheet} worksheet...\n")
-    worksheet_to_update = SHEET.worksheet(worksheet)
-    worksheet_to_update.append_row(data)
-    print(f"{worksheet} worksheet updated successfully\n")
+    if worksheet != "planned_sales":
+        print(f"Updating {worksheet} worksheet...\n")
+        worksheet_to_update = SHEET.worksheet(worksheet)
+        worksheet_to_update.append_row(data)
+        print(f"{worksheet} worksheet updated successfully\n")
+    else:
+        print(f"Skipping {worksheet} worksheet\n")
 
 
 def calculate_surplus_data(sales_row):
