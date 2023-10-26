@@ -220,8 +220,8 @@ def calculate_stock_data(data):
     critical_level_value = int(critical_level_cell.value) / 100
 
     new_stock_data = [
-        (stock - sales) if stock - sales >= 0 else
-        (-stock + sales) * critical_level_value
+        round((stock - sales) if stock - sales >= 0 else
+        (-stock + sales) * critical_level_value)
         for stock, sales in zip(latest_stock, latest_sales)
     ]
 
