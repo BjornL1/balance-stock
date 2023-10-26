@@ -221,7 +221,7 @@ def calculate_stock_data(data):
 
     new_stock_data = [
         round((stock - sales) if stock - sales >= 0 else
-        (-stock + sales) * critical_level_value)
+              (-stock + sales) * critical_level_value)
         for stock, sales in zip(latest_stock, latest_sales)
     ]
 
@@ -232,21 +232,29 @@ def main():
     """
     Run all program functions
     """
-    critical_level = get_critical_level()
-    display_header(SHEET.worksheet("sales"))
-    data = get_sales_data()
-    sales_data = [int(num) for num in data]
-    update_worksheet(sales_data, "sales")
-    new_surplus_data = calculate_surplus_data(sales_data)
-    update_worksheet(new_surplus_data, "surplus")
-    sales_columns = get_last_5_entries_sales()
-    stock_data = calculate_stock_data(sales_columns)
-    update_worksheet(stock_data, "stock")
-    planned_sales_data = get_planned_sales_data()
-    update_worksheet(planned_sales_data, "planned_sales")
+    while True:
+        critical_level = get_critical_level()
+        display_header(SHEET.worksheet("sales"))
+        data = get_sales_data()
+        sales_data = [int(num) for num in data]
+        update_worksheet(sales_data, "sales")
+        new_surplus_data = calculate_surplus_data(sales_data)
+        update_worksheet(new_surplus_data, "surplus")
+        sales_columns = get_last_5_entries_sales()
+        stock_data = calculate_stock_data(sales_columns)
+        update_worksheet(stock_data, "stock")
+        planned_sales_data = get_planned_sales_data()
+        update_worksheet(planned_sales_data, "planned_sales")
+
+        while True:
+            user_input = input(" add sales data? (yes/no): ").strip().lower()
+            if user_input == "no":
+                return  # Exit the program
+            elif user_input == "yes":
+                break  # Continue with another iteration of the loop
+            else:
+                print("Please enter 'yes' or 'no'.")
 
 
-print("BALANCE STOCK TESTER")
-
-
-main()
+if __name__ == "__main__":
+    main()
