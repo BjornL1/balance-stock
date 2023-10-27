@@ -193,31 +193,35 @@ def calculate_surplus_data(sales_row):
 
 def get_last_5_entries_sales():
     """
-    Collects columns of data from sales worksheet, collecting
-    the last 5 entries for each sandwich and returns the data
-    as a list of lists.
+    Collects columns of data from the "sales" worksheet, starting fr and
+    calculates the average values as a list of integers.
     """
     sales = SHEET.worksheet("sales")
 
-    columns = []
+    averages = []
     for ind in range(1, 6):
-        column = sales.col_values(ind)
-        columns.append(column[-1:])
+        column = sales.col_values(ind)[1:]  # Excl start from row 2
+        values = [int(value.replace(',', '')) for value in column]
+        average = sum(values) // len(values)  # Calcr average
+        averages.append(average)
 
-    return columns
+        # Print the average for the current column
+        print(f"Average for Column {ind}: {average}")
+
+    return averages
 
 
-def calculate_stock_data(data):
+def calculate_stock_data(average_sales):
     """
-    Calculate stock as the latest stock minus the latest sales.
-    If the result is negative, adjust it to be the equiv by thical level value.
+    Calculate stock as the latest stock minus the average sales.
+    If the result is negative, adjust it to be ttical level value.
     """
     print("Calculating stock data...\n")
-    stock = SHEET.worksheet("stock").get_all_values()
-    sales = SHEET.worksheet("sales").get_all_values()
+    for ind, value in enumerate(average_sales):
+        print(f"Average Sales for Column {ind + 1}: {value}")
 
+    stock = SHEET.worksheet("stock").get_all_values()
     latest_stock = [int(value.replace(',', '')) for value in stock[-1]]
-    latest_sales = [int(value.replace(',', '')) for value in sales[-1]]
 
     # Get the critical level value from cell A2 in the "critical_level" sheet
     critical_level_sheet = SHEET.worksheet("critical_level")
@@ -229,10 +233,14 @@ def calculate_stock_data(data):
     print(f"Critical Level Value: {critical_level_value}")
 
     new_stock_data = [
-        round((stock - sales) if stock - sales >= 0 else
-              (-stock + sales) * critical_level_value)
-        for stock, sales in zip(latest_stock, latest_sales)
+        round((stock - average_sales) if stock - average_sales >= 0 else
+              (-stock + average_sales) * critical_level_value)
+        for stock, average_sales in zip(latest_stock, average_sales)
     ]
+
+    # Print the value of (-stock + average_sales)
+    for ind, value in enumerate(new_stock_data):
+        print(f"Value of (-stock + average_sales)Column {ind + 1}: {value}")
 
     return new_stock_data
 
@@ -247,10 +255,15 @@ def main():
         data = get_sales_data()
         sales_data = [int(num) for num in data]
         update_worksheet(sales_data, "sales")
+
+        # Get the average of the last 5 entries for each column
+        average_sales_data = get_last_5_entries_sales()
+
         new_surplus_data = calculate_surplus_data(sales_data)
         update_worksheet(new_surplus_data, "surplus")
-        sales_columns = get_last_5_entries_sales()
-        stock_data = calculate_stock_data(sales_columns)
+
+        # Use the average sales data in the stock calculation
+        stock_data = calculate_stock_data(average_sales_data)
         update_worksheet(stock_data, "stock")
         planned_sales_data = get_planned_sales_data()
         update_worksheet(planned_sales_data, "planned_sales")
