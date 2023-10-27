@@ -68,11 +68,9 @@ def get_planned_sales_data():
 def get_critical_level():
     """
     Get critical level data input from the user.
-    Run a while loop id floating-point value from the user
-    via the terminal. Store the value in the "critical_level" sheet.
+    Append new data to the "critical_level" sheet.
     """
     critical_level_sheet = SHEET.worksheet("critical_level")
-    critical_level_data = []
 
     while True:
         print("Please enter the critical level (a number between 1 and 50):")
@@ -84,8 +82,14 @@ def get_critical_level():
             # Convert the input to a floating-point number
             adjusted_value = float(data_str)
             critical_level_data = [adjusted_value] * 5  # Repeat the values
-            critical_level_sheet.insert_rows([critical_level_data], 2)
-            print("Critical level data in the 'critical_level' sheet!")
+
+            # Find the next available row by checking the existing data
+            existing_data = critical_level_sheet.get_all_values()
+            next_row = len(existing_data) + 1
+
+            # Append the new data to the "critical_level" sheet
+            critical_level_sheet.insert_rows([critical_level_data], next_row)
+            print("Critical level data added to the 'critical_level' sheet!")
             break
 
     return critical_level_data
@@ -216,8 +220,13 @@ def calculate_stock_data(data):
     latest_sales = [int(value.replace(',', '')) for value in sales[-1]]
 
     # Get the critical level value from cell A2 in the "critical_level" sheet
-    critical_level_cell = SHEET.worksheet("critical_level").acell('A2')
-    critical_level_value = int(critical_level_cell.value) / 100
+    critical_level_sheet = SHEET.worksheet("critical_level")
+    critical_level_values = critical_level_sheet.col_values(1)
+    latest_critical_level = int(critical_level_values[-1])
+    critical_level_value = float(latest_critical_level) / 100
+
+    # Print the critical level value
+    print(f"Critical Level Value: {critical_level_value}")
 
     new_stock_data = [
         round((stock - sales) if stock - sales >= 0 else
