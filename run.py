@@ -250,7 +250,7 @@ def main():
     Run all program functions
     """
     while True:
-        critical_level = get_critical_level()
+        get_critical_level()
         display_header(SHEET.worksheet("sales"))
         data = get_sales_data()
         sales_data = [int(num) for num in data]
