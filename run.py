@@ -201,9 +201,9 @@ def get_last_5_entries_sales():
 
     averages = []
     for ind in range(1, 6):
-        column = sales.col_values(ind)[1:]  # Excl start from row 2
+        column = sales.col_values(ind)[1:]
         values = [int(value.replace(',', '')) for value in column]
-        average = sum(values) // len(values)  # Calcr average
+        average = sum(values) // len(values)
         averages.append(average)
 
         # Print the average for the current column
@@ -272,7 +272,7 @@ def main():
         update_worksheet(planned_sales_data, "planned_sales")
 
         while True:
-            user_input = input(" add sales data? (yes/no): ").strip().lower()
+            user_input = input("Add sales data? (yes/no): ").strip().lower()
             if user_input == "no":
                 return  # Exit the program
             elif user_input == "yes":
