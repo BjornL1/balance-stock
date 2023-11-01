@@ -73,8 +73,8 @@ def get_critical_level():
     critical_level_sheet = SHEET.worksheet("critical_level")
 
     while True:
-        print("Please enter the critical level (a number between 1 and 50):")
-        print("Example: 1.05, 10.0, 25.5, 35.5\n")
+        print("Please add a number between 1 and 50 (without decimals):")
+        print("Example: 1, 10, 25, 40\n")
 
         data_str = input("Enter your critical level here:\n ")
 
@@ -103,9 +103,10 @@ def validate_critical_level_data(value):
     try:
         int_value = int(value)
         if not (1 <= int_value <= 50):
-            raise ValueError("Critical level must be between 1 - 50.")
-    except ValueError as e:
-        print(f"Invalid critical level data: {e}, please try again.\n")
+            print("Value outside the valid range (1 - 50).")
+            return False
+    except ValueError:
+        print(f"'{value}' is invalid data, please try again.")
         return False
 
     return True
@@ -249,8 +250,10 @@ def main():
     """
     Run all program functions
     """
+    get_critical_level()
+
     while True:
-        get_critical_level()
+
         display_header(SHEET.worksheet("sales"))
         data = get_sales_data()
         sales_data = [int(num) for num in data]
