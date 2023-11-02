@@ -13,29 +13,6 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('balance_cost')
 
 
-def display_header(worksheet):
-    """
-    Update the header (first row) of the specified worksheet header.
-    """
-    header = worksheet.row_values(1)
-    print("Default item names:", header)
-
-    if not header:
-        print("Provide 5 comma-separated item names")
-        print("Example: Item1, Item2, Item3, Item4, Item5")
-
-        new_header = input("Enter the 5 comma-separated item names:\n")
-        header = new_header.split(",")
-
-        worksheet.update('A1', [header])
-
-        print("Updated header names:", header)
-    else:
-        print("Header already exists. If you want to update it")
-
-    print("This code always runs.")
-
-
 def get_planned_sales_data():
     planned_sales_sheet = SHEET.worksheet("planned_sales")
     surplus_sheet = SHEET.worksheet("surplus")
@@ -247,7 +224,6 @@ def main():
 
     while True:
 
-        display_header(SHEET.worksheet("sales"))
         data = get_sales_data()
         sales_data = [int(num) for num in data]
         update_worksheet(sales_data, "sales")
