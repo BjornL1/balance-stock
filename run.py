@@ -24,12 +24,10 @@ def display_header(worksheet):
         print("Provide 5 comma-separated item names")
         print("Example: Item1, Item2, Item3, Item4, Item5")
 
-        # Capture user input to update the header names
         new_header = input("Enter the 5 comma-separated item names:\n")
-        header = new_header.split(",")  # Split user input by commas
+        header = new_header.split(",")
 
-        # Update the header in the worksheet
-        worksheet.update('A1', [header])  # Note the list inside a list
+        worksheet.update('A1', [header])
 
         print("Updated header names:", header)
     else:
@@ -43,10 +41,9 @@ def get_planned_sales_data():
     surplus_sheet = SHEET.worksheet("surplus")
     stock_sheet = SHEET.worksheet("stock")
 
-    planned_values = []  # Initialize an empty list to store planned values
+    planned_values = []
 
     for col in range(1, 6):
-        # Get the latest value from surplus and stock sheets for column col
         surplus_value = float(
             surplus_sheet.col_values(col)[-1]
             .replace(',', '', 1)
@@ -54,15 +51,13 @@ def get_planned_sales_data():
         stock_value = float(stock_sheet.col_values(col)[-1]
                             .replace(',', '', 1))
 
-        # Calculate the planned value by adding surplus and stock values
         planned_value = stock_value - surplus_value
 
         planned_values.append(planned_value)
 
-    # Append the new data to the planned_sales worksheet
     planned_sales_sheet.append_rows([planned_values])
 
-    return planned_values  # Return the list of planned values
+    return planned_values
 
 
 def get_critical_level():
@@ -79,15 +74,13 @@ def get_critical_level():
         data_str = input("Enter your critical level here:\n ")
 
         if validate_critical_level_data(data_str):
-            # Convert the input to a floating-point number
-            adjusted_value = float(data_str)
-            critical_level_data = [adjusted_value] * 5  # Repeat the values
 
-            # Find the next available row by checking the existing data
+            adjusted_value = float(data_str)
+            critical_level_data = [adjusted_value] * 5
+
             existing_data = critical_level_sheet.get_all_values()
             next_row = len(existing_data) + 1
 
-            # Append the new data to the "critical_level" sheet
             critical_level_sheet.insert_rows([critical_level_data], next_row)
             print("Critical level data added to the 'critical_level' sheet!")
             break
@@ -97,8 +90,9 @@ def get_critical_level():
 
 def validate_critical_level_data(value):
     """
-    Validate the entered critical level value.
-    Ensure that it's an integer between 1 and 50.
+    Validate the entered critical level value
+    used for controlling the minimum stock level.
+    The code ensures that it's an integer between 1 and 50.
     """
     try:
         int_value = int(value)
@@ -114,14 +108,14 @@ def validate_critical_level_data(value):
 
 def get_sales_data():
     """
-    Get sales figures input from the user.
-    Run a while loop to collect a valid string of data from the user
-    via the terminal, which must be a string of 5 numbers separated
-    by commas. The loop will repeatedly request data until it is valid.
+    Function to let user add sales/order. The input is validated before
+    values are written to file to prevent invalid data to be added. If wrong
+    input is entered, the user needs to enter data again.
+    pre
     """
     while True:
-        print("Please enter sales data from the last market.")
-        print("Data should be six numbers, separated by commas.")
+        print("Please enter sales/order data.")
+        print("Data should be 5 positive numbers, separated by commas.")
         print("Example: 10,20,30,40,50\n")
 
         data_str = input("Enter your data here:\n")
@@ -137,17 +131,20 @@ def get_sales_data():
 
 def validate_data(values):
     """
-    Inside the try, convert all string values into integers.
-    Raise a ValueError if strings cannot be converted into int
-    or if there aren't exactly 5 values.
+    Evaluates if the user has entered 5 comma separated positive integers. For
+    incorrect values entered, two different error messages will be
+    printed depending on the input.
     """
     try:
-        [int(value) for value in values]
-        if len(values) != 5:
-            raise ValueError(
-                f"Exactly 5 values required, you provided {len(values)}")
+        int_values = [int(value) for value in values]
+        if len(int_values) != 5 or any(val < 0 for val in int_values):
+            raise ValueError("Exactly 5 non-negative values required")
     except ValueError as e:
-        print(f"Invalid data: {e}, please try again.\n")
+        error_message = str(e)
+        if "invalid literal" in error_message:
+            print("Invalid data, please try again.")
+        else:
+            print(error_message)
         return False
 
     return True
@@ -169,11 +166,9 @@ def update_worksheet(data, worksheet):
 
 def calculate_surplus_data(sales_row):
     """
-    Compare sales with stock and calculate the surplus for each item type.
-
-    The surplus is defined as the sales figure subtracted from the stock:
-    - Positive surplus indicates waste
-    - Negative surplus indicates extra made when stock was sold out.
+    This function displays the latest ordered compared to availabe stock.
+    A negative value is the quantity shows needed to produce.
+    A posiitive value represents how much is left in stock.
     """
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
@@ -194,8 +189,8 @@ def calculate_surplus_data(sales_row):
 
 def get_last_5_entries_sales():
     """
-    Collects columns of data from the "sales" worksheet, starting fr and
-    calculates the average values as a list of integers.
+    Calculates average sales for all available sales by
+    collecting the values from sales sheet
     """
     sales = SHEET.worksheet("sales")
 
@@ -206,7 +201,6 @@ def get_last_5_entries_sales():
         average = sum(values) // len(values)
         averages.append(average)
 
-        # Print the average for the current column
         print(f"Average for Column {ind}: {average}")
 
     return averages
@@ -214,24 +208,22 @@ def get_last_5_entries_sales():
 
 def calculate_stock_data(average_sales):
     """
-    Calculate stock as the latest stock minus the average sales.
-    If the result is negative, adjust it to be ttical level value.
+    Calculates reqested stock level based on critical level, average sales
+    and latest stock status.
     """
     print("Calculating stock data...\n")
     for ind, value in enumerate(average_sales):
-        print(f"Average Sales for Column {ind + 1}: {value}")
+        print(f"Average sales for column {ind + 1}: {value}")
 
     stock = SHEET.worksheet("stock").get_all_values()
     latest_stock = [int(value.replace(',', '')) for value in stock[-1]]
 
-    # Get the critical level value from cell A2 in the "critical_level" sheet
     critical_level_sheet = SHEET.worksheet("critical_level")
     critical_level_values = critical_level_sheet.col_values(1)
     latest_critical_level = int(critical_level_values[-1])
     critical_level_value = float(latest_critical_level) / 100
 
-    # Print the critical level value
-    print(f"Critical Level Value: {critical_level_value}")
+    print(f"Current critical level value: {critical_level_value}")
 
     new_stock_data = [
         round((stock - average_sales) if stock - average_sales >= 0 else
@@ -239,7 +231,6 @@ def calculate_stock_data(average_sales):
         for stock, average_sales in zip(latest_stock, average_sales)
     ]
 
-    # Print the value of (-stock + average_sales)
     for ind, value in enumerate(new_stock_data):
         print(f"Value of (-stock + average_sales)Column {ind + 1}: {value}")
 
@@ -250,7 +241,7 @@ def main():
     """
     Run all program functions
     """
-    get_critical_level()
+    latest_critical_level_data = get_critical_level()
 
     while True:
 
@@ -258,14 +249,11 @@ def main():
         data = get_sales_data()
         sales_data = [int(num) for num in data]
         update_worksheet(sales_data, "sales")
-
-        # Get the average of the last 5 entries for each column
         average_sales_data = get_last_5_entries_sales()
 
         new_surplus_data = calculate_surplus_data(sales_data)
         update_worksheet(new_surplus_data, "surplus")
 
-        # Use the average sales data in the stock calculation
         stock_data = calculate_stock_data(average_sales_data)
         update_worksheet(stock_data, "stock")
         planned_sales_data = get_planned_sales_data()
@@ -274,9 +262,17 @@ def main():
         while True:
             user_input = input("Add sales data? (yes/no): ").strip().lower()
             if user_input == "no":
-                return  # Exit the program
+                return
             elif user_input == "yes":
-                break  # Continue with another iteration of the loop
+                critical_level_sheet = SHEET.worksheet("critical_level")
+                existing_data = critical_level_sheet.get_all_values()
+                next_row = len(existing_data) + 1
+                critical_level_sheet.insert_rows(
+                    [latest_critical_level_data],
+                    next_row
+                )
+                print("Latest critical level to 'critical_level' sheet!")
+                break
             else:
                 print("Please enter 'yes' or 'no'.")
 
