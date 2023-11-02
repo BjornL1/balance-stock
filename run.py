@@ -61,29 +61,31 @@ def get_planned_sales_data():
 
 
 def get_critical_level():
-    """
-    Get critical level data input from the user.
-    Append new data to the "critical_level" sheet.
-    """
     critical_level_sheet = SHEET.worksheet("critical_level")
+    stock_sheet = SHEET.worksheet("stock")
 
     while True:
-        print("Please add a number between 1 and 50 (without decimals):")
+        print("Enter critical level (1-50, no decimals):")
         print("Example: 1, 10, 25, 40\n")
-
-        data_str = input("Enter your critical level here:\n ")
+        data_str = input("Enter your critical level:\n ")
 
         if validate_critical_level_data(data_str):
-
             adjusted_value = float(data_str)
             critical_level_data = [adjusted_value] * 5
 
             existing_data = critical_level_sheet.get_all_values()
             next_row = len(existing_data) + 1
 
-            critical_level_sheet.insert_rows([critical_level_data], next_row)
-            print("Critical level data added to the 'critical_level' sheet!")
-            break
+            stock_column = stock_sheet.col_values(1)
+            if next_row <= len(stock_column):
+                critical_level_sheet.insert_rows(
+                    [critical_level_data],
+                    next_row
+                )
+                print("Critical level data added to the vel' sheet!")
+                break
+            else:
+                print("Cannot add motical level than stock allows.")
 
     return critical_level_data
 
@@ -108,10 +110,9 @@ def validate_critical_level_data(value):
 
 def get_sales_data():
     """
-    Function to let user add sales/order. The input is validated before
-    values are written to file to prevent invalid data to be added. If wrong
-    input is entered, the user needs to enter data again.
-    pre
+    Function to let users add sales/order. The input is validated before
+    values are written to the file to prevent invalid data to be added.If
+    wrong input is entered, the user needs to enter data again.
     """
     while True:
         print("Please enter sales/order data.")
@@ -166,9 +167,10 @@ def update_worksheet(data, worksheet):
 
 def calculate_surplus_data(sales_row):
     """
-    This function displays the latest ordered compared to availabe stock.
-    A negative value is the quantity shows needed to produce.
-    A posiitive value represents how much is left in stock.
+    This function displays the latest sales/orders compared to available
+    stock.
+    A negative value is the expected quantity to produce.
+    A positive value represents how much is left in stock.
     """
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
@@ -187,7 +189,7 @@ def calculate_surplus_data(sales_row):
     return surplus_data
 
 
-def get_last_5_entries_sales():
+def get_sales_entries():
     """
     Calculates average sales for all available sales by
     collecting the values from sales sheet
@@ -208,8 +210,8 @@ def get_last_5_entries_sales():
 
 def calculate_stock_data(average_sales):
     """
-    Calculates reqested stock level based on critical level, average sales
-    and latest stock status.
+    Calculates requested stock level based on;
+    critical level, average sales and latest stock status.
     """
     print("Calculating stock data...\n")
     for ind, value in enumerate(average_sales):
@@ -249,7 +251,7 @@ def main():
         data = get_sales_data()
         sales_data = [int(num) for num in data]
         update_worksheet(sales_data, "sales")
-        average_sales_data = get_last_5_entries_sales()
+        average_sales_data = get_sales_entries()
 
         new_surplus_data = calculate_surplus_data(sales_data)
         update_worksheet(new_surplus_data, "surplus")
