@@ -14,6 +14,10 @@ SHEET = GSPREAD_CLIENT.open('balance_cost')
 
 
 def get_planned_sales_data():
+    """
+    Calculates the quantity needed to produce which is used
+    for calculating the stock.
+    """
     planned_sales_sheet = SHEET.worksheet("planned_sales")
     surplus_sheet = SHEET.worksheet("surplus")
     stock_sheet = SHEET.worksheet("stock")
@@ -29,7 +33,6 @@ def get_planned_sales_data():
                             .replace(',', '', 1))
 
         planned_value = stock_value - surplus_value
-
         planned_values.append(planned_value)
 
     planned_sales_sheet.append_rows([planned_values])
@@ -38,13 +41,18 @@ def get_planned_sales_data():
 
 
 def get_critical_level():
+    """
+    Adds a critical level representing the minimum level of stock
+    to be available. The number set by user is an integer which is
+    converted into a percentage used in the calculations.
+    """
     critical_level_sheet = SHEET.worksheet("critical_level")
     stock_sheet = SHEET.worksheet("stock")
 
     while True:
-        print("Enter critical level (1-50, no decimals):")
+        print("Set you critical percentage level (1-50, no decimals)")
         print("Example: 1, 10, 25, 40\n")
-        data_str = input("Enter your critical level:\n ")
+        data_str = input("Enter your critical percentage level:\n")
 
         if validate_critical_level_data(data_str):
             adjusted_value = float(data_str)
@@ -59,10 +67,13 @@ def get_critical_level():
                     [critical_level_data],
                     next_row
                 )
-                print("Critical level data added to the vel' sheet!")
+                print(f"Critical level value {adjusted_value} %"
+                      "successfully added!\n")
+
                 break
             else:
-                print("Cannot add motical level than stock allows.")
+                print("Value already added, please add sales data.")
+                break
 
     return critical_level_data
 
@@ -88,11 +99,14 @@ def validate_critical_level_data(value):
 def get_sales_data():
     """
     Function to let users add sales/order. The input is validated before
-    values are written to the file to prevent invalid data to be added.If
+    values are written to the file to prevent invalid data to be added. If
     wrong input is entered, the user needs to enter data again.
     """
+    sales_worksheet = SHEET.worksheet("sales")
+    headers = sales_worksheet.row_values(1)
     while True:
-        print("Please enter sales/order data.")
+        header_str = ", ".join(headers)
+        print(f"Please enter sales/order data for {header_str}")
         print("Data should be 5 positive numbers, separated by commas.")
         print("Example: 10,20,30,40,50\n")
 
@@ -101,7 +115,7 @@ def get_sales_data():
         sales_data = data_str.split(",")
 
         if validate_data(sales_data):
-            print("Data is valid!")
+            print("Sales data are added successfully!\n")
             break
 
     return sales_data
@@ -131,15 +145,20 @@ def validate_data(values):
 def update_worksheet(data, worksheet):
     """
     Receives a list of integers to be inserted into a worksheet
-    Update the relevant worksheet with the data provided
+    Update the relevant worksheet with the data provided.
     """
     if worksheet != "planned_sales":
         print(f"Updating {worksheet} worksheet...\n")
         worksheet_to_update = SHEET.worksheet(worksheet)
-        worksheet_to_update.append_row(data)
-        print(f"{worksheet} worksheet updated successfully\n")
+
+        # Convert integers to strings and remove commas
+        data_str = [str(val).replace(',', '') for val in data]
+
+        worksheet_to_update.append_row(data_str)
+        print(f"Updated {worksheet} worksheet successfully\n")
+        print(f"Data sent to {worksheet} sheet: {data_str}")
     else:
-        print(f"Skipping {worksheet} worksheet\n")
+        print(f"Updated {worksheet} successfully\n")
 
 
 def calculate_surplus_data(sales_row):
@@ -159,9 +178,9 @@ def calculate_surplus_data(sales_row):
         surplus_data.append(surplus)
 
         if surplus < 0:
-            print(f"Too low   {surplus}")
+            print(f"Surplus is negative   {surplus}")
         else:
-            print(f"OK   {surplus}")
+            print(f"Surplus is in balance   {surplus}")
 
     return surplus_data
 
@@ -169,7 +188,7 @@ def calculate_surplus_data(sales_row):
 def get_sales_entries():
     """
     Calculates average sales for all available sales by
-    collecting the values from sales sheet
+    collecting the values from the sales sheet.
     """
     sales = SHEET.worksheet("sales")
 
@@ -179,8 +198,6 @@ def get_sales_entries():
         values = [int(value.replace(',', '')) for value in column]
         average = sum(values) // len(values)
         averages.append(average)
-
-        print(f"Average for Column {ind}: {average}")
 
     return averages
 
@@ -202,7 +219,7 @@ def calculate_stock_data(average_sales):
     latest_critical_level = int(critical_level_values[-1])
     critical_level_value = float(latest_critical_level) / 100
 
-    print(f"Current critical level value: {critical_level_value}")
+    print(f"surpl critical level value: {critical_level_value * 100} %\n")
 
     new_stock_data = [
         round((stock - average_sales) if stock - average_sales >= 0 else
