@@ -62,17 +62,18 @@ def get_critical_level():
             next_row = len(existing_data) + 1
 
             stock_column = stock_sheet.col_values(1)
+
             if next_row <= len(stock_column):
                 critical_level_sheet.insert_rows(
                     [critical_level_data],
                     next_row
                 )
                 print(f"Critical level value {adjusted_value} %"
-                      "successfully added!\n")
+                      " was added successfully!\n")
 
                 break
             else:
-                print("Value already added, please add sales data.")
+                print("Value is already added, please add sales data.")
                 break
 
     return critical_level_data
@@ -115,7 +116,7 @@ def get_sales_data():
         sales_data = data_str.split(",")
 
         if validate_data(sales_data):
-            print("Sales data is added successfully!\n")
+            print("Adding sales data...\n")
             break
 
     return sales_data
@@ -148,10 +149,8 @@ def update_worksheet(data, worksheet):
     Update the relevant worksheet with the data provided.
     """
     if worksheet != "planned_sales":
-        print(f"Updating {worksheet} worksheet...\n")
         worksheet_to_update = SHEET.worksheet(worksheet)
 
-        # Convert integers to strings and remove commas
         data_str = [str(val).replace(',', '') for val in data]
 
         worksheet_to_update.append_row(data_str)
@@ -211,8 +210,6 @@ def calculate_stock_data(average_sales):
     latest_critical_level = int(critical_level_values[-1])
     critical_level_value = float(latest_critical_level) / 100
 
-    print(f"Critical level value: {critical_level_value * 100} %\n")
-
     new_stock_data = [
         round((stock - average_sales) if stock - average_sales >= 0 else
               (average_sales) * critical_level_value)
@@ -250,12 +247,13 @@ def main():
             elif user_input == "yes":
                 critical_level_sheet = SHEET.worksheet("critical_level")
                 existing_data = critical_level_sheet.get_all_values()
+                latest_critical_level = latest_critical_level_data[0]
                 next_row = len(existing_data) + 1
                 critical_level_sheet.insert_rows(
                     [latest_critical_level_data],
                     next_row
                 )
-                print("Latest critical level to 'critical_level' sheet!")
+                print(f"Critical level value: {latest_critical_level} %")
                 break
             else:
                 print("Please enter 'yes' or 'no'.")
