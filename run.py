@@ -43,38 +43,39 @@ def get_planned_sales_data():
 def get_critical_level():
     """
     Adds a critical level representing the minimum level of stock
-    to be available. The number set by user is an integer which is
+    to be available. The number set by the user is an integer which is
     converted into a percentage used in the calculations.
     """
     critical_level_sheet = SHEET.worksheet("critical_level")
     stock_sheet = SHEET.worksheet("stock")
 
-    while True:
-        print("Set you critical percentage level (1-50, no decimals)")
-        print("Example: 1, 10, 25, 40\n")
-        data_str = input("Enter your critical percentage level:\n")
+    existing_data = critical_level_sheet.get_all_values()
 
-        if validate_critical_level_data(data_str):
-            adjusted_value = float(data_str)
-            critical_level_data = [adjusted_value] * 5
+    if not existing_data[1:]:
+        while True:
+            print("Set your critical percentage level (1-50, no decimals)")
+            print("Example: 1, 10, 25, 40\n")
+            data_str = input("Enter your critical percentage level:\n")
 
-            existing_data = critical_level_sheet.get_all_values()
-            next_row = len(existing_data) + 1
+            if validate_critical_level_data(data_str):
+                adjusted_value = float(data_str)
+                critical_level_data = [adjusted_value] * 5
 
-            stock_column = stock_sheet.col_values(1)
+                existing_data = critical_level_sheet.get_all_values()
+                next_row = len(existing_data) + 1
 
-            if next_row <= len(stock_column):
-                critical_level_sheet.insert_rows(
-                    [critical_level_data],
-                    next_row
-                )
-                print(f"Critical level value {adjusted_value} %"
-                      " was added successfully!\n")
-
-                break
-            else:
-                print("Value is already added, please add sales data.")
-                break
+                stock_column = stock_sheet.col_values(1)
+                if next_row <= len(stock_column):
+                    critical_level_sheet.insert_rows(
+                        [critical_level_data],
+                        next_row
+                    )
+                    print(f"Critical level value {adjusted_value} %"
+                          " successfully added!\n")
+                    break
+                else:
+                    print("Value already added, please add sales data.")
+                    break
 
     return critical_level_data
 
@@ -247,13 +248,15 @@ def main():
             elif user_input == "yes":
                 critical_level_sheet = SHEET.worksheet("critical_level")
                 existing_data = critical_level_sheet.get_all_values()
-                latest_critical_level = latest_critical_level_data[0]
                 next_row = len(existing_data) + 1
                 critical_level_sheet.insert_rows(
                     [latest_critical_level_data],
                     next_row
                 )
-                print(f"Critical level value: {latest_critical_level} %")
+                latest_critical_level_str = str(latest_critical_level_data)
+                latest_cr_level_str = latest_critical_level_str.strip("[]")
+                latest_cr_lev_value = latest_cr_level_str.split(",")[0]
+                print(f"Critical level value: {latest_cr_lev_value.strip()} %")
                 break
             else:
                 print("Please enter 'yes' or 'no'.")
