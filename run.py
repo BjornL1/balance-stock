@@ -177,11 +177,6 @@ def calculate_surplus_data(sales_row):
         surplus = int(stock) - sales
         surplus_data.append(surplus)
 
-        if surplus < 0:
-            print(f"Surplus is negative   {surplus}")
-        else:
-            print(f"Surplus is in balance   {surplus}")
-
     return surplus_data
 
 
@@ -223,7 +218,7 @@ def calculate_stock_data(average_sales):
 
     new_stock_data = [
         round((stock - average_sales) if stock - average_sales >= 0 else
-              (-stock + average_sales) * critical_level_value)
+              (average_sales) * critical_level_value)
         for stock, average_sales in zip(latest_stock, average_sales)
     ]
 
