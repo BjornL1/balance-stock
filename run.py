@@ -115,7 +115,7 @@ def get_sales_data():
         sales_data = data_str.split(",")
 
         if validate_data(sales_data):
-            print("Sales data are added successfully!\n")
+            print("Sales data is added successfully!\n")
             break
 
     return sales_data
@@ -156,7 +156,6 @@ def update_worksheet(data, worksheet):
 
         worksheet_to_update.append_row(data_str)
         print(f"Updated {worksheet} worksheet successfully\n")
-        print(f"Data sent to {worksheet} sheet: {data_str}")
     else:
         print(f"Updated {worksheet} successfully\n")
 
@@ -203,8 +202,6 @@ def calculate_stock_data(average_sales):
     critical level, average sales and latest stock status.
     """
     print("Calculating stock data...\n")
-    for ind, value in enumerate(average_sales):
-        print(f"Average sales for column {ind + 1}: {value}")
 
     stock = SHEET.worksheet("stock").get_all_values()
     latest_stock = [int(value.replace(',', '')) for value in stock[-1]]
@@ -214,16 +211,13 @@ def calculate_stock_data(average_sales):
     latest_critical_level = int(critical_level_values[-1])
     critical_level_value = float(latest_critical_level) / 100
 
-    print(f"surpl critical level value: {critical_level_value * 100} %\n")
+    print(f"Critical level value: {critical_level_value * 100} %\n")
 
     new_stock_data = [
         round((stock - average_sales) if stock - average_sales >= 0 else
               (average_sales) * critical_level_value)
         for stock, average_sales in zip(latest_stock, average_sales)
     ]
-
-    for ind, value in enumerate(new_stock_data):
-        print(f"Value of (-stock + average_sales)Column {ind + 1}: {value}")
 
     return new_stock_data
 
