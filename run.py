@@ -43,39 +43,37 @@ def get_planned_sales_data():
 def get_critical_level():
     """
     Adds a critical level representing the minimum level of stock
-    to be available. The number set by the user is an integer which is
+    to be available. The number set by user is an integer which is
     converted into a percentage used in the calculations.
     """
     critical_level_sheet = SHEET.worksheet("critical_level")
     stock_sheet = SHEET.worksheet("stock")
 
-    existing_data = critical_level_sheet.get_all_values()
+    while True:
+        print("Set you critical percentage level (1-50, no decimals)")
+        print("Example: 1, 10, 25, 40\n")
+        data_str = input("Enter your critical percentage level:\n")
 
-    if not existing_data[1:]:
-        while True:
-            print("Set your critical percentage level (1-50, no decimals)")
-            print("Example: 1, 10, 25, 40\n")
-            data_str = input("Enter your critical percentage level:\n")
+        if validate_critical_level_data(data_str):
+            adjusted_value = float(data_str)
+            critical_level_data = [adjusted_value] * 5
 
-            if validate_critical_level_data(data_str):
-                adjusted_value = float(data_str)
-                critical_level_data = [adjusted_value] * 5
+            existing_data = critical_level_sheet.get_all_values()
+            next_row = len(existing_data) + 1
 
-                existing_data = critical_level_sheet.get_all_values()
-                next_row = len(existing_data) + 1
+            stock_column = stock_sheet.col_values(1)
+            if next_row <= len(stock_column):
+                critical_level_sheet.insert_rows(
+                    [critical_level_data],
+                    next_row
+                )
+                print(f"Critical level value {adjusted_value} %"
+                      "successfully added!\n")
 
-                stock_column = stock_sheet.col_values(1)
-                if next_row <= len(stock_column):
-                    critical_level_sheet.insert_rows(
-                        [critical_level_data],
-                        next_row
-                    )
-                    print(f"Critical level value {adjusted_value} %"
-                          " successfully added!\n")
-                    break
-                else:
-                    print("Value already added, please add sales data.")
-                    break
+                break
+            else:
+                print("Value already added, please add sales data.")
+                break
 
     return critical_level_data
 
