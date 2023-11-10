@@ -264,7 +264,8 @@ def main():
                 for i, item in enumerate(header):
                     values = [row[i] for row in sales_rows[-4:]]
                     display_values = (
-                        values if len(sales_rows) > 4 else values[:len(sales_rows)]
+                        values if len(sales_rows) > 4 else
+                        values[:len(sales_rows)]
                     )
 
                     print(f"{item}: {', '.join(display_values)}")
