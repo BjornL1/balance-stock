@@ -57,6 +57,13 @@ def get_critical_level():
     critical_level_sheet = SHEET.worksheet("critical_level")
     stock_sheet = SHEET.worksheet("stock")
 
+    critical_cols = len(critical_level_sheet.col_values(1))
+    stock_cols = len(stock_sheet.col_values(1))
+
+    if critical_cols == stock_cols:
+        latest_row_number = len(critical_level_sheet.get_all_values())
+        critical_level_sheet.delete_rows(latest_row_number)
+
     while True:
         print("Set you critical percentage level (1-50, no decimals)")
         print("Only digits, example: 1, 10, 25, 40\n")
@@ -76,11 +83,7 @@ def get_critical_level():
                     next_row
                 )
                 print(f"Critical level value {adjusted_value} %"
-                      "successfully added!\n")
-
-                break
-            else:
-                print("Value already added, please add sales data.")
+                      " added successfully!\n")
                 break
 
     return critical_level_data
@@ -138,7 +141,7 @@ def validate_data(values):
     try:
         int_values = [int(value) for value in values]
         if len(int_values) != 5 or any(val < 0 for val in int_values):
-            raise ValueError("Exactly 5 non-negative values required")
+            raise ValueError("Exactly 5 positive values required")
     except ValueError as e:
         error_message = str(e)
         if "invalid literal" in error_message:
@@ -250,7 +253,25 @@ def main():
         while True:
             user_input = input("Add sales data? (yes/no): ").strip().lower()
             if user_input == "no":
-                print("******************************************")
+                sales_sheet = SHEET.worksheet("sales")
+                sales_column_values = sales_sheet.get_all_values()
+                sales_rows = sales_column_values[1:]
+                header = sales_column_values[0]
+
+                print("Below is the latest trend for sales data.")
+                print("Maximum four sessions are presented.")
+                print("The newest values are displayed end of each line.\n")
+                for i, item in enumerate(header):
+                    values = [row[i] for row in sales_rows[-4:]]
+                    display_values = (
+                        values if len(sales_rows) > 4 else values[:len(sales_rows)]
+                    )
+
+                    print(f"{item}: {', '.join(display_values)}")
+                    if i < len(header) - 1:
+                        print()
+                print()
+                print("********************************************")
                 print("EXITING THE PROGRAM, GOODBYE! ")
                 print("To start a new session")
                 print("click 'RUN PROGRAM' at the top of the page")
