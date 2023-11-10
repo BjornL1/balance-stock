@@ -46,12 +46,20 @@ def get_critical_level():
     to be available. The number set by user is an integer which is
     converted into a percentage used in the calculations.
     """
+    print("******************************************")
+    print("---WELCOME TO STOCK BALANCE CALCULATOR!---\n")
+    print("1. Add your critical percentage level (1-50)")
+    print("2. Add your sales data")
+    print("3. Choose to continue with adding sales data")
+    print("   or exit the program")
+    print("******************************************\n")
+
     critical_level_sheet = SHEET.worksheet("critical_level")
     stock_sheet = SHEET.worksheet("stock")
 
     while True:
         print("Set you critical percentage level (1-50, no decimals)")
-        print("Example: 1, 10, 25, 40\n")
+        print("Only digits, example: 1, 10, 25, 40\n")
         data_str = input("Enter your critical percentage level:\n")
 
         if validate_critical_level_data(data_str):
@@ -242,6 +250,11 @@ def main():
         while True:
             user_input = input("Add sales data? (yes/no): ").strip().lower()
             if user_input == "no":
+                print("******************************************")
+                print("EXITING THE PROGRAM, GOODBYE! ")
+                print("To start a new session")
+                print("click 'RUN PROGRAM' at the top of the page")
+                print("******************************************")
                 return
             elif user_input == "yes":
                 critical_level_sheet = SHEET.worksheet("critical_level")
