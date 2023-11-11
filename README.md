@@ -68,16 +68,18 @@ Keeping track of the available storage space capacity in a warehouse and avoidin
 This project is a command line based program with a user prepared input window run through heroku, no exclusive design besides the interface provided by heroku are added.
 
 ### Flowchart
+The image below illustrates the basic flowchart structure for the project.
 
+![](readme_images/flowchart.png)
 
 ## Features
    
    The result of the code is written to a gspread sheet which contains five different tabs further described below
  - Stock 
-   - These values are written one time period (day, week, month) before other fields, which represents to be available before next consumption of the same will occur. Initially the gspread sheet will be populated with '0' for each item, however the user can update to another value to be used as the base before calculating next stock. The purpose with stock data is to display what stock level or quantity to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handling temporary fluctuations e.g. avoiding to order more then necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sale). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
+   - These values are written one time period (day, week, month) before other the other sheets, which represents the stock quantity to be available before the next consumption of the items. Initially the gspread sheet will be populated with '0' for each item, however the user can update to another value to be used as the base before calculating next stock. The purpose with stock data is to display what stock level or quantity to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handle temporary fluctuations e.g. avoiding to order more than necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sale). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
       
  - Critical level
-   - The "critical level" is a value that the user can choose to use as a way to control the minimum share quantities (based on sales) to be avalailable before the next order of them. In the delivered code the value is integers between 1 to 50 represting 1 to 50 % of average sales, however this can easily be updated by changing these values to change the range per user request.
+   - The "critical level" is a value that the user can choose to use as a way to control the minimum share quantities (based on sales) to be available before the next order of them. In the delivered code the value is integers between 1 to 50 representing 1 to 50 % of average sales, however this can easily be updated by changing these values to change the range per user request.
      - Error handling:
        - If the user entered non-integer characters or nothing an error message will be prompted as follows "You entered invalid data. Please try again".
 
@@ -86,15 +88,46 @@ This project is a command line based program with a user prepared input window r
    - When a user adds sales data which can also be equivalent to any type of order, the actual calculation of stock, surplus and planned sales starts.
      - Error handling:
        - If the user entered non-integer characters or nothing an error message will be prompted as follows "You entered invalid data. Please try again".
-       - If the user entered wrong number or values or five values where at least one is negative, the error message will be the following "Exactly 5 positive values required."
+       - If the user entered the wrong number or values or five values where at least one is negative, the error message will be the following: "Exactly 5 positive values required."
 
 ![](readme_images/sales_error.png)
 
 - Surplus 
-  - The surplus value illustrates how the latest sales or orders affected the current balance between existing stock and sales, the value written to the gspread can be interpreted as the number of orders to prepare to maintain the current stock without using the calculation of average sales and critcal level.
+  - The surplus value illustrates how the latest sales or orders affected the current balance between existing stock and sales, the value written to the gspread can be interpreted as the number of orders to prepare to maintain the current stock without using the calculation of average sales and critical level.
 
 - Planned sales
-  - The planned sales values represents the actual values needed to produce or prepare for acheiveing the target value of stock. These values are calculated by adding the surplus value with the product of average sales and the critical level value.
+  - The planned sales values represent the actual values needed to produce or prepare for achieving the target value of stock. These values are calculated by adding the surplus value with the product of average sales and the critical level value.
+
+### Program procedures
+In the following description, the definition of "session" is equivalent to a program run without existing and restarting the program.
+
+The program can be run in one or multiple sessions, where the first mentioned handles one time of adding critical level, sales and then exiting the program.
+If no invalid data is entered, the following steps will be performed from a user perspective with a single session:
+1. Run program.
+2. Enter critical level data.
+3. Enter sales data.
+4. Enter "no" when being asked for adding more sales data (yes or no).
+5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
+   message and the program is exiting.
+
+
+#### Program procedure - multiple sessions
+
+When a user wish to perform several sessions, the program will return to step 3 instead of exiting program from step 4 and as long as the user enters
+"yes" in step 4 this will continue.
+
+In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets.
+
+For a "two-session" program run, these will be the steps.
+
+1. Run program.
+2. Entered critical level data.
+3.(1) Enter sales data.
+4.(1) Enter "yes" when being asked for adding more sales data (yes or no).
+3.(2) Enter sales data.
+4.(2) Enter "no" when being asked for adding more sales data (yes or no).
+5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
+   message and the program is exiting  
 
 
 ### Future Implementations
@@ -153,17 +186,17 @@ Deployment steps are as follows, after account setup:
 * Click on Create App.
 
 In order for the project to run on Heroku, Heroku is needed to install the dependencies. 
-* In the terminal write the following commando `pip3 freeze > requirements.txt` to create a list of requirements. The list of dependencies will go into `requirements.txt` file.
+* In the terminal write the following commando `pip3 freeze > requirements.txt` to create a list of requirements. The list of dependencies will go into the `requirements.txt` file.
 
-The sensitive data needs to be kept secret and Heroku will build the app using the code in the Github. The creds.json file is protected in gitignore file and these credentials are needed in order to connect to API. To allow the Heroku Application to access the spreadsheet the following steps are needed:
+The sensitive data needs to be kept secret and Heroku will build the app using the code in the Github. The creds.json file is protected in the gitignore file and these credentials are needed in order to connect to the API. To allow the Heroku Application to access the spreadsheet the following steps are needed:
 
 * From the new app Settings, click Reveal Config Vars, and set the value of KEY to **CREDS** (all capital letters), and go to the repository, copy the entire`creds.json` then paste it into the VALUE field. Then click "Add". Add another KEY called **PORT** and VALUE **8000**, then click "Add".
 * Further down, to support dependencies, select Add Buildpack.
 * The order of the buildpacks is important, select Python first, then click "Save changes". Then add Node.js second and click "Save changes" again. If they are not in this order, you can drag them to rearrange them.
 * Go to "Deploy" and select "GitHub" in "Deployment method".
 * To connect Heroku app to your Github repository code enter your repository name, click 'Search' and then 'Connect' when it shows below
-* Choose the branch you want to buid your app from.
-* If prefered, click on "Enable Automatic Deploys", which keeps the app up to date with your GitHub repository.
+* Choose the branch you want to build your app from.
+* If preferred, click on "Enable Automatic Deploys", which keeps the app up to date with your GitHub repository.
 * Wait for the app to build. Once ready you will see the “App was successfully deployed” message and a 'View' button to take you to your deployed link.
 
 [GitHub repository](https://github.com/luandretta/quiz-python) 
@@ -220,7 +253,7 @@ The url for this website can be found [here](https://quizpython.herokuapp.com/)
 - **Create a Spreadsheet (Data Model)**
 
 1. Login to your Google account, create an account if necessary.
-2. Navigate to Sheets, Googles version of Microsoft Excel.
+2. Navigate to Sheets, Google's version of Microsoft Excel.
 3. Start a new spreadsheet, amend the title at the top i.e., quiz_python.
 4. Create 2 Sheets/Tabs, titling 'questions' and 'answers'.
 5. Add the data according to the screenshot in [Used-technologies](#used-technologies).
@@ -233,7 +266,7 @@ The url for this website can be found [here](https://quizpython.herokuapp.com/)
 3. Once the previous step is complete, create a new project with a unique title.
 4. Click on the "Select Project" button to bring you to your project page.
 5. You should now arrive at the project dashboard and be ready to setup the required credentials:
-- Access the navigation menu from clicking on the burger icon (three horizonal lines menu icon) in the top left corner of the page.
+- Access the navigation menu from clicking on the burger icon (three horizontal lines menu icon) in the top left corner of the page.
 - Select APIs and Services, followed by 'Library'.
 - Search for and select Google Drive API -> Enable.
 - Search for and select Google Sheets API -> Enable.
@@ -252,9 +285,9 @@ The url for this website can be found [here](https://quizpython.herokuapp.com/)
 - Select 'JSON' and then click Create. This will trigger the json file with your API credentials in it to download to your machine.
 - Go back to the library and search for "google sheets".
 - Click Enable.
-- From your local downloads folder, add file directly to your Gitpod workspace, and rename the file to creds.json.
+- From your local downloads folder, add the file directly to your Gitpod workspace, and rename the file to creds.json.
 - Within the file, copy the value for 'client email'. 
-- Paste this email address into the 'Share' area of your Google Sheet, assigning the role of Editor, untick "Notify People" and then click "share".
+- Paste this email address into the 'Share' area of your Google Sheet, assign the role of Editor, untick "Notify People" and then click "share".
 
 
 Enable API within IDE
@@ -298,20 +331,7 @@ SHEET = GSPREAD.open("quiz_python")
 
 ####  Validator Testing
 W3C Markup Validator
-  - HTML - No errors were returned when passing through the official W3C Markup Validator
-
-- W3C Validator Results
-  - CSS - No errors were found when passing through the official W3C CSS Validator
-
-- JSHint
-  - The test gives warning for: 'let' and 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz). After discussion with my mentor this is not a critical item and can be ignored, it is rather related to a default setting in JS hint and is connected to an extension in JSHint that is not detected/installed.
-  - One undefined variable for EmailJS send mail function, however the code snippet is according to instructions and gives no error or strange behavior on any device/platform so this message from JShint is ignored.
-
-- Lighthouse (desktop)
-  - Accessibility/SEO
-   - The site achieved a score of 100%, see below picture from lighthouse testing.
-  - Performance achieved a score of 97%.
-  - Best practice achieved a score of 92%, a generic message regarding ("Expect-CT` header is deprecated and will be removed. Chrome requires Certificate Transparency for all publicly trusted certificates issued after April 30, 2018") causing the lower score.
+  - 
 
   ![lighthouse_test](readme_images/lighthouse.png)
 
@@ -343,15 +363,15 @@ I also used the following website to test responsiveness:
 
 
 - Known Bugs/compromise
-  - When the program is run in codeanywhere it seems like, in certain condition, (due to server connection issue or high load) a time out error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performned. 
+  - When the program is run in codeanywhere it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. 
     
 
 ## Credits
 ### Code Used 
 
 - Specific coding
-  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore this code is consise and inventing a new alternative code doing the same thing was considered as irrational and did not add any user value.
-  To summarize; the uniqiness for the project code is rather the concept of how the the critical level, average sales are calculating stock and planned sales.
+  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore this code is concise and inventing a new alternative code doing the same thing was considered as irrational and did not add any user value.
+  To summarize; the uniqueness for the project code is rather the concept of how the critical level, average sales are calculating stock and planned sales.
 
  - General coding
    - For inspiration and tips the major sources were:
@@ -361,7 +381,7 @@ I also used the following website to test responsiveness:
 
 ### Content
 
-The idea is my own on how to code the calculation model, though some basics (as mentionend in in previous section) on how to connect the gpsread sheets are inspired by the love sandwich project.
+The idea is my own on how to code the calculation model, though some basics (as mentioned in the previous section) on how to connect the gspread sheets are inspired by the love sandwich project.
 
 
 ### Acknowledgments

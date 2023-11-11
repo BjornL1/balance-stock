@@ -101,7 +101,7 @@ def validate_critical_level_data(value):
             print("Value outside the valid range (1 - 50).")
             return False
     except ValueError:
-        print(f"'{value}' is invalid data, please try again.")
+        print("You entered invalid data, please try again.")
         return False
 
     return True
@@ -109,7 +109,7 @@ def validate_critical_level_data(value):
 
 def get_sales_data():
     """
-    Function to let users add sales/order. The input is validated before
+    Function to let users add sales or similar. The input is validated before
     values are written to the file to prevent invalid data to be added. If
     wrong input is entered, the user needs to enter data again.
     """
@@ -117,9 +117,9 @@ def get_sales_data():
     headers = sales_worksheet.row_values(1)
     while True:
         header_str = ", ".join(headers)
-        print(f"Please enter sales/order data for {header_str}")
+        print(f"Please enter sales data for {header_str}")
         print("Data should be 5 positive numbers, separated by commas.")
-        print("Example: 10,20,30,40,50\n")
+        print("Example: 1000,200,30,4000,500\n")
 
         data_str = input("Enter your data here:\n")
 
@@ -145,7 +145,7 @@ def validate_data(values):
     except ValueError as e:
         error_message = str(e)
         if "invalid literal" in error_message:
-            print("Invalid data, please try again.")
+            print("You entered invalid data, please try again.")
         else:
             print(error_message)
         return False
@@ -171,7 +171,7 @@ def update_worksheet(data, worksheet):
 
 def calculate_surplus_data(sales_row):
     """
-    This function displays the latest sales/orders compared to available
+    This function displays the latest sales compared to available
     stock.
     A negative value is the expected quantity to produce.
     A positive value represents how much is left in stock.
@@ -231,7 +231,8 @@ def calculate_stock_data(average_sales):
 
 def main():
     """
-    Run all program functions
+    Run all program functions, it also includes the option
+    for a user to add more sales data in a session or exit the program.
     """
     latest_critical_level_data = get_critical_level()
 
@@ -260,7 +261,8 @@ def main():
 
                 print("Below is the latest trend for sales data.")
                 print("Maximum four sessions are presented.")
-                print("The newest values are displayed end of each line.\n")
+                print("The latest values are displayed at the")
+                print(" end of each line.\n")
                 for i, item in enumerate(header):
                     values = [row[i] for row in sales_rows[-4:]]
                     display_values = (
