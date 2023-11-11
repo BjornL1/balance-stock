@@ -262,7 +262,7 @@ def main():
                 print("Below is the latest trend for sales data.")
                 print("Maximum four sessions are presented.")
                 print("The latest values are displayed at the")
-                print(" end of each line.\n")
+                print("end of each line.\n")
                 for i, item in enumerate(header):
                     values = [row[i] for row in sales_rows[-4:]]
                     display_values = (

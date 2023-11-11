@@ -116,7 +116,6 @@ If no invalid data is entered, the following steps will be performed from a user
 When a user wish to perform several sessions, the program will return to step 3 instead of exiting program from step 4 and as long as the user enters
 "yes" in step 4 this will continue.
 
-In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets.
 
 For a "two-session" program run, these will be the steps.
 
@@ -127,7 +126,84 @@ For a "two-session" program run, these will be the steps.
 3.(2) Enter sales data.
 4.(2) Enter "no" when being asked for adding more sales data (yes or no).
 5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
-   message and the program is exiting  
+   message and the program is exiting.  
+
+In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets. In the example three sessions has already been stored and two more sessions will be added.
+
+Adding two sessions of values to gspread:
+
+- Before running the program the state of the sales sheets has been updated with three sessions, note that all sheets except the stock sheet will have three rows of data added to them once the sessions has completed successfully. An addtional row will allways be present on the stock sheet after a session since this is the data that which will be the basis to use for the next session.
+
+Although the stock data has a one row "offset" compared to the other sheets, once the critical data has been entered by the user the critical value sheet will have the equal number temporary after the user has entered this value but has not yet added sales data.
+
+----------------------------------------------------------------------------
+-- Status of sales and critical level sheets before any update--:
+
+SALES
+
+![](readme_images/sales_before_enter.png)
+
+CRITICAL LEVEL
+
+![](readme_images/critical_level_before_sales.png)
+
+-----------------------------------------------------------------------------
+
+-- Status of sales and critical level sheets after enter the critical level--:
+The value of 15 was entered.
+
+FROM PROGRAM
+
+![](readme_images/fifteen_percent.png)
+
+CRITICAL LEVEL (Note the latest value added to the fifth row)
+
+![](readme_images/criticlevel_before_sales.png)
+
+-----------------------------------------------------------------------------
+
+-- Status of sales after enter sales data--:
+Following values were entered: 100,4000,300,20000,3
+
+![](readme_images/sales_second_last.png)
+
+-----------------------------------------------------------------------------
+
+-- Status of sales, critical level after enter yes on "add more sales data"--:
+
+Note that in this stage, when the user enters "yes" the critical level values are copied from the latest valid values entered by the user and these 
+values are used to calculate the current session for stock and planned sales data.
+
+FROM PROGRAM
+
+![](readme_images/sales_yes.png)
+
+CRITICAL LEVEL SHEET
+
+![](readme_images/final_critical_level.png)
+
+STOCK SHEET
+
+![](readme_images/final_stock.png)
+
+
+----------------------------------------------------------------------------
+
+-- Status of sales, critical level after enter no on "add more sales data"--:
+
+FROM PROGRAM 
+
+Note that the trend for the last four sessions are presented, the latest values (20000, 30, 58, 850, 3000) are the ones at the end of each line.
+
+
+
+![](readme_images/sales_after_no_answer.png)
+
+SALES SHEET
+
+![](readme_images/final_sales.png)
+
+----------------------------------------------------------------------------
 
 
 ### Future Implementations
