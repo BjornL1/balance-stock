@@ -76,7 +76,7 @@ The image below illustrates the basic flowchart structure for the project.
    
    The result of the code is written to a gspread sheet which contains five different tabs further described below
  - Stock 
-   - These values are written one time period (day, week, month) before other the other sheets, which represents the stock quantity to be available before the next consumption of the items. Initially the gspread sheet will be populated with '0' for each item, however the user can update to another value to be used as the base before calculating next stock. The purpose with stock data is to display what stock level or quantity to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handle temporary fluctuations e.g. avoiding to order more than necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sale). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
+   - These values are written one time period (day, week, month) before the other sheets, which represents the stock quantity to be available before the next consumption of the items. Initially the gspread sheet will be populated with '0' for each item, however the user can update to another value to be used as the base before calculating next stock. The purpose with stock data is to display what stock level or quantity to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handle temporary fluctuations e.g. avoiding to order more than necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sale). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
       
  - Critical level
    - The "critical level" is a value that the user can choose to use as a way to control the minimum share quantities (based on sales) to be available before the next order of them. In the delivered code the value is integers between 1 to 50 representing 1 to 50 % of average sales, however this can easily be updated by changing these values to change the range per user request.
@@ -128,13 +128,13 @@ For a "two-session" program run, these will be the steps.
 5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
    message and the program is exiting.  
 
-In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets. In the example three sessions has already been stored and two more sessions will be added.
+In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets. In the example three sessions have already been stored and two more sessions will be added.
 
 Adding two sessions of values to gspread:
 
-- Before running the program the state of the sales sheets has been updated with three sessions, note that all sheets except the stock sheet will have three rows of data added to them once the sessions has completed successfully. An addtional row will allways be present on the stock sheet after a session since this is the data that which will be the basis to use for the next session.
+- Before running the program the state of the sales sheets has been updated with three sessions, note that all sheets except the stock sheet will have three rows of data added to them once the sessions have completed successfully. An additional row will always be present on the stock sheet after a session since this is the data that will be the basis to use for the next session.
 
-Although the stock data has a one row "offset" compared to the other sheets, once the critical data has been entered by the user the critical value sheet will have the equal number temporary after the user has entered this value but has not yet added sales data.
+Although the stock data has a one row "offset" compared to the other sheets, once the critical data has been entered by the user the critical value sheet will have the equal number temporarily after the user has entered this value but has not yet added sales data.
 
 ----------------------------------------------------------------------------
 -- Status of sales and critical level sheets before any update--:
@@ -207,8 +207,8 @@ SALES SHEET
 
 ### Future Implementations
   - In a more advanced version of this program, the focus would be to add a capability sheet or input. This variable could be based
-  on the planned sales data and could evaluate the availble and needed resources to produce the requested items. By adding this feature the user's possibilies to 
-  plan activities would be improved, furthermore this functionality could also inlclude a value recommended given by the program for stock and critical level to the user based on exisiting statistics.
+  on the planned sales data and could evaluate the avaialble and needed resources to produce the requested items. By adding this feature the user's possibilities to 
+  plan activities would be improved, furthermore this functionality could also include a value recommended by the program for stock and critical level to the user based on existing statistics.
 
 ### Accessibility
 
@@ -222,7 +222,7 @@ SALES SHEET
 - Python
 ### Frameworks, Libraries & Programs Used
 
-- [Draw] (https://app.diagrams.net/) - For creating flowchart.
+- [Draw](https://app.diagrams.net/) - For creating flowchart.
 
 - Git - For version control.
 
@@ -230,7 +230,7 @@ SALES SHEET
 
 - [Google gspread sheet](https://www.google.com/sheets/about/)
 
-- [Heroku](https://dashboard.heroku.com/apps/) - Deplyoment platform.
+- [Heroku](https://dashboard.heroku.com/apps/) - Deployment platform.
 
 
 ## Deployment & Local Development
@@ -388,14 +388,17 @@ SHEET = GSPREAD.open("quiz_python")
 ## Testing
 
 ### Testing User Stories from (UX) Section
--  As a user I am interested in the website's purpose and eager to test the calculator.
-  - The site has a clean look with few distractions, the fields are labeled and placeholder text to facilitate a short lead time to start calculations. 
+-  As a user I am interested in the website's purpose and interested to test the basic function.
+  - The site has a clear structure and the data is entered in steps explained at the starting page. 
+  - When ending a session the site will display the latest sales in the program which enables the user to follow how data is added to the sheets directly in the program enviroment.
 
-- As a user I am understanding how to alternate values for retrieving different results.
-  - The clear button indicates the fields can be updated continuously and the drop down menu indicates that several calculations can be performed.
 
-- Using the send result function and comparing various results.
-  - By sending the result the user can save the result if needed and compare the result with updated calculations or send the result to others.
+- As a user I am understanding how to results are affected by adding multpiple rows of data.
+  - The user can monitor the results in the gpsread sheet actively and follow the different steps how the critical level is updated and then also being able to compare how 
+    the data is updated after sales is added for all sheets.
+  - The user will be displayed a value of the critical level if the user answer yes to add more sales data in a session, this will make it clear which critical level is used for each session.
+
+
 
 ####  Validator Testing
 CI Python Linter
@@ -438,7 +441,7 @@ The name and email field was tested individually, the error message is shown for
 ### Code Used 
 
 - Specific coding
-  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore this code is concise and inventing a new alternative code doing the same thing was considered as irrational and did not add any user value.
+  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore, this code is concise and inventing a new alternative code doing the same thing was considered as irrational and did not add any user value.
   To summarize; the uniqueness for the project code is rather the concept of how the critical level, average sales are calculating stock and planned sales.
 
  - General coding
