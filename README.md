@@ -1,4 +1,4 @@
-# STOCK BALANCE TESTER 
+# STOCK BALANCE CALCULATOR 
 
 This site provides a tool which supports maintaining the number of items in a warehouse at a level which balances the available space and still prevents potential shortages,
 furthermore it can be used to plan production and avoid potential shortages based on previous sales trends.
@@ -9,14 +9,14 @@ Start up page
 
 
 Link to the site:
-[STOCK BALANCE TESTER](https://balancestockone-d671f64958d2.herokuapp.com/)
+[STOCK BALANCE CALCULATOR](https://balancestockone-d671f64958d2.herokuapp.com/)
 
 Link to gsread sheet:
 [balance_cost](https://docs.google.com/spreadsheets/d/1yVF_vHRsd5iUPxqPZM8spsaaGX2B8JLeBPi9Lx5JGIE/edit?pli=1#gid=1269880517)
 
 ## CONTENTS
 
-- [STOCK BALANCE TESTER](#bank-loan-payoff-calculator)
+- [STOCK BALANCE CALCULATOR](#stock-balance-calculator)
   - [CONTENTS](#contents)
   - [User Experience (UX)](#user-experience-ux)
     - [User Stories](#user-stories)
