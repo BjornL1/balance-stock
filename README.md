@@ -3,9 +3,16 @@
 This site provides a tool which supports maintaining the number of items in a warehouse at a level which balances the available space and still prevents potential shortages,
 furthermore it can be used to plan production and avoid potential shortages based on previous sales trends.
 
+Start up page 
+
+![](readme_images/heroku_startup.png)
+
 
 Link to the site:
 [STOCK BALANCE TESTER](https://balancestockone-d671f64958d2.herokuapp.com/)
+
+Link to gsread sheet:
+[balance_cost](https://docs.google.com/spreadsheets/d/1yVF_vHRsd5iUPxqPZM8spsaaGX2B8JLeBPi9Lx5JGIE/edit?pli=1#gid=1269880517)
 
 ## CONTENTS
 
@@ -388,15 +395,15 @@ SHEET = GSPREAD.open("quiz_python")
 ## Testing
 
 ### Testing User Stories from (UX) Section
--  As a user I am interested in the website's purpose and interested to test the basic function.
+-  As a user I am interested in the website's purpose and interested in testing the basic function.
   - The site has a clear structure and the data is entered in steps explained at the starting page. 
-  - When ending a session the site will display the latest sales in the program which enables the user to follow how data is added to the sheets directly in the program enviroment.
+  - When ending a session the site will display the latest sales in the program which enables the user to follow how data is added to the sheets directly in the program envirnoment.
 
 
-- As a user I am understanding how to results are affected by adding multpiple rows of data.
+- As a user I am understanding how results are affected by adding multiple rows of data.
   - The user can monitor the results in the gpsread sheet actively and follow the different steps how the critical level is updated and then also being able to compare how 
-    the data is updated after sales is added for all sheets.
-  - The user will be displayed a value of the critical level if the user answer yes to add more sales data in a session, this will make it clear which critical level is used for each session.
+    the data is updated after sales are added for all sheets.
+  - The user will be displayed a value of the critical level if the user answers yes to add more sales data in a session, this will make it clear which critical level is used for each session.
 
 
 
@@ -410,15 +417,15 @@ CI Python Linter
 
 - Critical level
   - The following values were entered to test error functionality: 'a' , ',' , '2,3'. Also nothing was added and enter was pressed. 
-    - All tests were correctly handled with the respons: "You entered invalid data, please try again."
+    - All tests were correctly handled with the response: "You entered invalid data, please try again."
   - The following values were entered to test error functionality: '-10' , '0'  , '100'
-    - All tests were correctly handled with the respons: "Value outside the valid range (1 - 50)."
+    - All tests were correctly handled with the response: "Value outside the valid range (1 - 50)."
 
 - Sales 
   -The following values were entered to test error functionality: 'a' , ',' , '-'. Also nothing was added and enter was pressed. 
-    - All tests were correctly handled with the respons: "You entered invalid data, please try again."
+    - All tests were correctly handled with the response: "You entered invalid data, please try again."
   - The following values were entered to test error functionality: '-10' , '-10,-10,-10,-10,-10'  , '30,30,30,30' , '60,60,60,60,60,60'  , '0'.
-    - All tests were correctly handled with the respons: "Exactly 5 positive values required"
+    - All tests were correctly handled with the response: "Exactly 5 positive values required"
 
 - Gspread sheets
 The name and email field was tested individually, the error message is shown for the name field regardless of the status for the email field and vice versa. The send result button is only enabled once both fields are valid, and if any field is changed before sending the mail, the button is set to disabled again.
@@ -431,10 +438,10 @@ The name and email field was tested individually, the error message is shown for
     level shall be removed to start a new session. The program worked as intended and prevented a critical level to be updated twice without having the sales data being updated after the first entry.
 
 - Solved bugs
-  -  Intially there was a problem to copy the values from critical level sheet to the next row if user entered yes (on the question if user wants to add more sales data), the values were added three times, but after a review of the logic the isse could be solved.
+  -  Initially there was a problem to copy the values from the critical level sheet to the next row if user entered yes (on the question if user wants to add more sales data), the values were added three times, but after a review of the logic the issue could be solved.
 
 - Known Bugs/compromise
-  - This potential bug seems to be connected to codeanywhere since it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. However after cleaning the code and removing an unecesseray else statement in the "get critical level" code block the issue seems to be resolved, though could be worth mentioning this scenario if the code were suppose to be run in codeanywhere which seems to be having an impact on this behaviour,. The issue was not notable in Heroku.
+  - This potential bug seems to be connected to codeanywhere since it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. However after cleaning the code and removing an unnecessary else statement in the "get critical level" code block the issue seems to be resolved, though it could be worth mentioning this scenario if the code were supposed to be run in codeanywhere which seems to be having an impact on this behaviour. The issue was not notable in Heroku.
     
 
 ## Credits
