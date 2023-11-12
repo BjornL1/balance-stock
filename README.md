@@ -1,11 +1,11 @@
 # STOCK BALANCE TESTER 
 
-This site provides a tool which supports maintaining the number of items in a warehouse at a level which balances the available space and still prevents potential shortages.
+This site provides a tool which supports maintaining the number of items in a warehouse at a level which balances the available space and still prevents potential shortages,
+furthermore it can be used to plan production and avoid potential shortages based on previous sales trends.
 
-![landing page](readme_images/landingpage_.png)
 
 Link to the site:
-[STOCK BALANCE TESTER](https://bjornl1.github.io/bankloan-calculator/)
+[STOCK BALANCE TESTER](https://balancestockone-d671f64958d2.herokuapp.com/)
 
 ## CONTENTS
 
@@ -205,16 +205,16 @@ SALES SHEET
 
 ----------------------------------------------------------------------------
 
-
 ### Future Implementations
-  - Use "bars” for the input fields that the user can move either with the mouse pointer (laptop) or fingers (phone/tablet), the calculation results would be updated continuously once the bar is dragged across the screen.
-  - Connect the page to a database to let users add either a valid currency that can be added after the amount, by using a database the currency will be updated continuously. Furthermore, this type of functionality could also be used to use ratios between different currencies (e.g. compare the loan in euro and dollars).
+  - In a more advanced version of this program, the focus would be to add a capability sheet or input. This variable could be based
+  on the planned sales data and could evaluate the availble and needed resources to produce the requested items. By adding this feature the user's possibilies to 
+  plan activities would be improved, furthermore this functionality could also inlclude a value recommended given by the program for stock and critical level to the user based on exisiting statistics.
 
 ### Accessibility
 
-- I have been mindful during coding to ensure that the website is as accessible and friendly as possible. I have achieved this by:
+- I have been mindful during coding to ensure that the website is as accessible and user friendly as possible. I have achieved this by:
 - Coding according to PEP8 standard.
-- 
+- Adding useful comments for each code block.
 
 ## Technologies Used
 
@@ -222,22 +222,15 @@ SALES SHEET
 - Python
 ### Frameworks, Libraries & Programs Used
 
-- [Am I Responsive](https://ui.dev/amiresponsive) & [Responsinator](http://www.responsinator.com/) - To show the website image on a range of devices.
-
-- [EmailJS](https://www.emailjs.com/) - Mail service to send mail directly from javascript code.
-
-- [Balsamiq](https://balsamiq.com/) - Used to create wireframes.
-
-- [Favicon.io](https://favicon.io/) To create favicon.
+- [Draw] (https://app.diagrams.net/) - For creating flowchart.
 
 - Git - For version control.
 
 - Github - To save and store the files for the website.
 
-- [Google Dev Tools](https://developer.chrome.com/docs/devtools/) - To troubleshoot and test features, and solve issues with responsiveness and styling.
+- [Google gspread sheet](https://www.google.com/sheets/about/)
 
-- [Google Fonts](https://fonts.google.com/) - To import the fonts used on the website.
-
+- [Heroku](https://dashboard.heroku.com/apps/) - Deplyoment platform.
 
 
 ## Deployment & Local Development
@@ -401,45 +394,44 @@ SHEET = GSPREAD.open("quiz_python")
 - As a user I am understanding how to alternate values for retrieving different results.
   - The clear button indicates the fields can be updated continuously and the drop down menu indicates that several calculations can be performed.
 
-
 - Using the send result function and comparing various results.
   - By sending the result the user can save the result if needed and compare the result with updated calculations or send the result to others.
 
 ####  Validator Testing
-W3C Markup Validator
-  - 
+CI Python Linter
+  - The code has passed the test without any errors found.
 
-  ![lighthouse_test](readme_images/lighthouse.png)
+![](readme_images/test_result.png)
 
 ####  Further Testing
 
-- Calculation field
-  - The form has been tested to ensure it would not enable the calculation button if the bank loan is less than <10000 or the interest field is empty.
-  - The clear button is working independently from input field values as intended, meaning it will clear the fields regardless of value.
+- Critical level
+  - The following values were entered to test error functionality: 'a' , ',' , '2,3'. Also nothing was added and enter was pressed. 
+    - All tests were correctly handled with the respons: "You entered invalid data, please try again."
+  - The following values were entered to test error functionality: '-10' , '0'  , '100'
+    - All tests were correctly handled with the respons: "Value outside the valid range (1 - 50)."
 
-- Result: output testing
-  - The result is presented as intended, loans at the lower range and with too high value of payoff years are displayed with red if the minimum requirements (minimum 100 amortization per month) are not met, whereas values passing minimum requirements are displayed with green and costs presented. Re-calculation and new results can be generated without reloading the page. 
+- Sales 
+  -The following values were entered to test error functionality: 'a' , ',' , '-'. Also nothing was added and enter was pressed. 
+    - All tests were correctly handled with the respons: "You entered invalid data, please try again."
+  - The following values were entered to test error functionality: '-10' , '-10,-10,-10,-10,-10'  , '30,30,30,30' , '60,60,60,60,60,60'  , '0'.
+    - All tests were correctly handled with the respons: "Exactly 5 positive values required"
 
-- Send result
+- Gspread sheets
 The name and email field was tested individually, the error message is shown for the name field regardless of the status for the email field and vice versa. The send result button is only enabled once both fields are valid, and if any field is changed before sending the mail, the button is set to disabled again.
-
 
 - Browser Testing
   - The Website was tested on Google Chrome, Firefox, Microsoft Edge, and Safari browsers with no issues noted, except the deviations described in "known bugs/compromise" section below. 
 
-- Device Testing
-  - The website was viewed on a variety of devices such as Laptop, iPhone 11, and iPad to ensure responsiveness on various screen sizes. The website performed as intended. The responsive design was also checked using Chrome developer tools across multiple devices with structural integrity holding for the various sizes.
-
-I also used the following website to test responsiveness:
-- Responsinator
-- Am I responsive
+- Interruption test
+  - A test was also performed which simulates when a user has entered critical level but is interrupting it with CTRL C, the program shall then start over and the latest critical
+    level shall be removed to start a new session. The program worked as intended and prevented a critical level to be updated twice without having the sales data being updated after the first entry.
 
 - Solved bugs
-  -  A problem with the input field on Iphone 11 was detected during the late stage of testing, the restriction of number, letters or other characters did not behave the same way as for the laptop version. Some re-coding was needed to have a consistent function between laptop and phone. Especially solving how to allow digits and a dot only but no other characters and also only allowing two decimal digits used in the text field for interest rate required a major investigation.
-
+  -  Intially there was a problem to copy the values from critical level sheet to the next row if user entered yes (on the question if user wants to add more sales data), the values were added three times, but after a review of the logic the isse could be solved.
 
 - Known Bugs/compromise
-  - When the program is run in codeanywhere it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. 
+  - This potential bug seems to be connected to codeanywhere since it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. However after cleaning the code and removing an unecesseray else statement in the "get critical level" code block the issue seems to be resolved, though could be worth mentioning this scenario if the code were suppose to be run in codeanywhere which seems to be having an impact on this behaviour,. The issue was not notable in Heroku.
     
 
 ## Credits
