@@ -409,9 +409,10 @@ SHEET = GSPREAD.open("quiz_python")
 ####  Validator Testing
 CI Python Linter
   - The code has passed the test without any errors found by testing it in codeanywhere, however if the code is tested directly from
-  GitHub in CI Python Linter it will claim an error for 307: W292 no newline at end of file (unless you manually edit code directly in GitHub adding that emoty row
-  that the Linter expects, then it will pass but editing code in github should be avoided). To solve this isse a comment is added in the end of
-  the file, this will make sure a line is inserted after the final code if the workspace is forked making it work properly.
+  GitHub in CI Python Linter it will claim an error for 307: W292 no newline at end of file (unless you manually edit the code directly in GitHub 
+  adding that empty row that the CI Python Linter expects, then it will pass but editing code in github should be avoided). To solve this 
+  issue a comment is added in the end of the file, this will make sure an empty 
+  line is inserted after the final code (main) if the workspace is forked making it work properly.
 
 
 ![](readme_images/test_result.png)
