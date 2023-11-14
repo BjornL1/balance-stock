@@ -20,7 +20,6 @@ Link to gsreadsheet:
   - [User Experience (UX)](#user-experience-ux)
     - [User Stories](#user-stories)
   - [Design](#design)
-    - 
   - [Features](#features)
     - [Future Implementations](#future-implementations)
     - [Accessibility](#accessibility)
@@ -71,6 +70,7 @@ Keeping track of the available storage space capacity in a warehouse and avoidin
     for various items.
 
 ## Design
+
 This project is a command line based program with a user prepared input window run through heroku, no exclusive design besides the interface provided by heroku are added.
 
 ### Flowchart
