@@ -1,7 +1,6 @@
 # STOCK BALANCE CALCULATOR 
 
-This site provides a tool which supports maintaining the number of items in a warehouse at a level which balances the available space and still prevents potential shortages,
-furthermore it can be used to plan production and avoid potential shortages based on previous sales trends.
+This site enables control and planning of stock in a warehouse at a level which balances the requirements between available space versus sales or preventing costly slow-moving inventory yet still preventing potential shortages, furthermore it can be used to plan production and avoid potential shortages based on previous sales trends.
 
 Start up page 
 
@@ -11,7 +10,7 @@ Start up page
 Link to the site:
 [STOCK BALANCE CALCULATOR](https://balancestockone-d671f64958d2.herokuapp.com/)
 
-Link to gsread sheet:
+Link to gsreadsheet:
 [balance_cost](https://docs.google.com/spreadsheets/d/1yVF_vHRsd5iUPxqPZM8spsaaGX2B8JLeBPi9Lx5JGIE/edit?pli=1#gid=1269880517)
 
 ## CONTENTS
@@ -81,9 +80,9 @@ The image below illustrates the basic flowchart structure for the project.
 
 ## Features
    
-   The result of the code is written to a gspread sheet which contains five different tabs further described below
+   The result of the code is written to a gspreadsheet which contains five different tabs further described below
  - Stock 
-   - These values are written one time period (day, week, month) before the other sheets, which represents the stock quantity to be available before the next consumption of the items. Initially the gspread sheet will be populated with '0' for each item, however the user can update to another value to be used as the base before calculating next stock. The purpose with stock data is to display what stock level or quantity to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handle temporary fluctuations e.g. avoiding to order more than necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sale). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
+   - The values printed to the associated sheet for stock data are one row "offset" compared to the other sheets, meaning that for the initial run of the program the gspread sheet will be populated with '0' (unless the user has entered other data to be set at initial run) for each item in row number 2 whereas the other sheets will be empty except for the header (row number one). The purpose with displaying stock level one time period (representing e.g., day, week, month) ahead of the other sheets is to prepare for the next production run, sales or similar. The stock values are calculated by multiplying the user's chosen "critical level" with the average sales from previous weeks, hence the first initial sales averages will be the same as the entered values. By using a critical level, the target is to optimize and handle temporary fluctuations e.g. avoiding to order more than necessary both for financial or physical space reasons after temporary peak in sales (which could be the case if the calculation for next stock was simply based on the previous sales). A similar purpose is also valid for the opposite scenario where the suggested stock level can prevent the risk of delaying deliveries due to shortage. 
       
  - Critical level
    - The "critical level" is a value that the user can choose to use as a way to control the minimum share quantities (based on sales) to be available before the next order of them. In the delivered code the value is integers between 1 to 50 representing 1 to 50 % of average sales, however this can easily be updated by changing these values to change the range per user request.
@@ -100,27 +99,27 @@ The image below illustrates the basic flowchart structure for the project.
 ![](readme_images/sales_error.png)
 
 - Surplus 
-  - The surplus value illustrates how the latest sales or orders affected the current balance between existing stock and sales, the value written to the gspread can be interpreted as the number of orders to prepare to maintain the current stock without using the calculation of average sales and critical level.
+  - The surplus value illustrates how the latest sales or orders affected the current balance between existing stock and sales, the value written to the gspreadsheet can be interpreted as the number of orders to prepare to maintain the current stock without using the calculation of average sales and critical level.
 
 - Planned sales
-  - The planned sales values represent the actual values needed to produce or prepare for achieving the target value of stock. These values are calculated by adding the surplus value with the product of average sales and the critical level value.
+  - The planned sales values represent the actual values needed to produce or prepare for achieving the target value of stock. These values are calculated by adding the surplus value with the product of average sales and the critical level value. A negative value in this sheet indicates that no production of this item is needed in that specific timeframe, the stock data is sufficient to manage the requested stock for next time the program runs.
 
 ### Program procedures
 In the following description, the definition of "session" is equivalent to a program run without existing and restarting the program.
 
-The program can be run in one or multiple sessions, where the first mentioned handles one time of adding critical level, sales and then exiting the program.
+The program can be run in one or multiple sessions, where the first mentioned handles one time of adding critical level, sales and then the sessions ends.
 If no invalid data is entered, the following steps will be performed from a user perspective with a single session:
 1. Run program.
 2. Enter critical level data.
 3. Enter sales data.
 4. Enter "no" when being asked for adding more sales data (yes or no).
 5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
-   message and the program is exiting.
+   message and the session ends.
 
 
 #### Program procedure - multiple sessions
 
-When a user wish to perform several sessions, the program will return to step 3 instead of exiting program from step 4 and as long as the user enters
+When a user wish to perform several sessions, the program will return to step 3 instead of exiting the program from step 4 and as long as the user enters
 "yes" in step 4 this will continue.
 
 
@@ -133,11 +132,11 @@ For a "two-session" program run, these will be the steps.
 3.(2) Enter sales data.
 4.(2) Enter "no" when being asked for adding more sales data (yes or no).
 5. A list from the latest sales (maximum four sessions) will be presented to the user in the program, this is followed by a goodbye
-   message and the program is exiting.  
+   message and the session ends.
 
-In the below example a session with two runs will be presented, also images from the gspread sheet will be added to visualize the data flow and how values are fetched and written to the gspread sheets. In the example three sessions have already been stored and two more sessions will be added.
+In the below example a session with two runs will be presented, also images from the gspreadsheet will be added to visualize the data flow and how values are fetched and written to the gspreadsheets. In the example three sessions have already been stored and two more sessions will be added.
 
-Adding two sessions of values to gspread:
+Adding two sessions of values to the gspreadsheets:
 
 - Before running the program the state of the sales sheets has been updated with three sessions, note that all sheets except the stock sheet will have three rows of data added to them once the sessions have completed successfully. An additional row will always be present on the stock sheet after a session since this is the data that will be the basis to use for the next session.
 
@@ -214,7 +213,7 @@ SALES SHEET
 
 ### Future Implementations
   - In a more advanced version of this program, the focus would be to add a capability sheet or input. This variable could be based
-  on the planned sales data and could evaluate the avaialble and needed resources to produce the requested items. By adding this feature the user's possibilities to 
+  on the planned sales data and could evaluate the available and needed resources to produce the requested items. By adding this feature the user's possibilities to 
   plan activities would be improved, furthermore this functionality could also include a value recommended by the program for stock and critical level to the user based on existing statistics.
 
 ### Accessibility
@@ -235,7 +234,7 @@ SALES SHEET
 
 - Github - To save and store the files for the website.
 
-- [Google gspread sheet](https://www.google.com/sheets/about/)
+- [Google gspreadsheet](https://www.google.com/sheets/about/)
 
 - [Heroku](https://dashboard.heroku.com/apps/) - Deployment platform.
 
@@ -264,7 +263,7 @@ Deployment steps are as follows, after account setup:
 In order for the project to run on Heroku, Heroku is needed to install the dependencies. 
 * In the terminal write the following commando `pip3 freeze > requirements.txt` to create a list of requirements. The list of dependencies will go into the `requirements.txt` file.
 
-The sensitive data needs to be kept secret and Heroku will build the app using the code in the Github. The creds.json file is protected in the gitignore file and these credentials are needed in order to connect to the API. To allow the Heroku Application to access the spreadsheet the following steps are needed:
+The sensitive data needs to be kept secret and Heroku will build the app using the code in the Github. The creds.json file is protected in the .gitignore file and these credentials are needed in order to connect to the API. To allow the Heroku Application to access the spreadsheet the following steps are needed:
 
 * From the new app Settings, click Reveal Config Vars, and set the value of KEY to **CREDS** (all capital letters), and go to the repository, copy the entire`creds.json` then paste it into the VALUE field. Then click "Add". Add another KEY called **PORT** and VALUE **8000**, then click "Add".
 * Further down, to support dependencies, select Add Buildpack.
@@ -397,11 +396,11 @@ SHEET = GSPREAD.open("quiz_python")
 ### Testing User Stories from (UX) Section
 -  As a user I am interested in the website's purpose and interested in testing the basic function.
   - The site has a clear structure and the data is entered in steps explained at the starting page. 
-  - When ending a session the site will display the latest sales in the program which enables the user to follow how data is added to the sheets directly in the program envirnoment.
+  - When ending a session the site will display the latest sales in the program which enables the user to follow how data is added to the sheets directly in the program environment.
 
 
 - As a user I am understanding how results are affected by adding multiple rows of data.
-  - The user can monitor the results in the gpsread sheet actively and follow the different steps how the critical level is updated and then also being able to compare how 
+  - The user can monitor the results in the gpsreadsheet actively and follow the different steps how the critical level is updated and then also being able to compare how 
     the data is updated after sales are added for all sheets.
   - The user will be displayed a value of the critical level if the user answers yes to add more sales data in a session, this will make it clear which critical level is used for each session.
 
@@ -427,7 +426,7 @@ CI Python Linter
   - The following values were entered to test error functionality: '-10' , '-10,-10,-10,-10,-10'  , '30,30,30,30' , '60,60,60,60,60,60'  , '0'.
     - All tests were correctly handled with the response: "Exactly 5 positive values required"
 
-- Gspread sheets
+- Gspreadsheets
   - The name and email field was tested individually, the error message is shown for the name field regardless of the status for the email field and vice versa. The send result button is only enabled once both fields are valid, and if any field is changed before sending the mail, the button is set to disabled again.
 
 - Browser Testing
@@ -438,17 +437,17 @@ CI Python Linter
     level shall be removed to start a new session. The program worked as intended and prevented a critical level to be updated twice without having the sales data being updated after the first entry.
 
 - Solved bugs
-  -  Initially there was a problem to copy the values from the critical level sheet to the next row if user entered yes (on the question if user wants to add more sales data), the values were added three times, but after a review of the logic the issue could be solved.
+  -  Initially there was a problem to copy the values from the critical level sheet to the next row if the user entered yes (on the question if the user wants to add more sales data), the values were added three times, but after a review of the logic the issue could be solved.
 
 - Known Bugs/compromise
-  - This potential bug seems to be connected to codeanywhere since it seems like, in certain conditions, (due to server connection issue or high load) a timeout error could occur, the operation and interaction could be interrupted leading to an error while the program tries to update the sheets after a calculation is performed. However after cleaning the code and removing an unnecessary else statement in the "get critical level" code block the issue seems to be resolved, though it could be worth mentioning this scenario if the code were supposed to be run in codeanywhere which seems to be having an impact on this behaviour. The issue was not notable in Heroku.
+  - There are no known bugs, however there was noticed a timeout error related to the gpsreadsheet which seemed to be connected to codeanywhere specifically (the error was not noticed in Heroku). By removing an unnecessary else statement in the "get critical level" code block the issue seems to be resolved, it was not possible to reproduce the problem in codeanywhere. still it could be worth mentioning this scenario if the code were supposed to be run in codeanywhere which seems to be having an impact on the stability in general for the program due to server issues (the latest comment is input from codeanywhere support).
     
 
 ## Credits
 ### Code Used 
 
 - Specific coding
-  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore, this code is concise and inventing a new alternative code doing the same thing was considered as irrational and did not add any user value.
+  - The coding has similarities with "love sandwiches" walkthrough project, more specifically it is the way to update the worksheets (the code block called def update_worksheet(data, worksheet):. This process to update the sheets after each calculation could be seen as a rather general method, furthermore, this existing code is concise and inventing a new alternative code doing the same thing was considered irrational and did not add any user value.
   To summarize; the uniqueness for the project code is rather the concept of how the critical level, average sales are calculating stock and planned sales.
 
  - General coding
@@ -459,7 +458,7 @@ CI Python Linter
 
 ### Content
 
-The idea is my own on how to code the calculation model, though some basics (as mentioned in the previous section) on how to connect the gspread sheets are inspired by the love sandwich project.
+The idea is my own on how to code the calculation model, some basics (as mentioned in the previous section) on how to connect the gspreadsheets are inspired by the love sandwich project. The concept of adding a table presenting the latest sales before exiting the program was requested by my mentor.
 
 
 ### Acknowledgments

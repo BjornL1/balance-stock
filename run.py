@@ -16,7 +16,8 @@ SHEET = GSPREAD_CLIENT.open('balance_cost')
 def get_planned_sales_data():
     """
     Calculates the quantity needed to produce which is used
-    for calculating the stock.
+    for calculating the stock. The value calculated is:
+    latest stock values - the latest surplus values.
     """
     planned_sales_sheet = SHEET.worksheet("planned_sales")
     surplus_sheet = SHEET.worksheet("surplus")
@@ -43,7 +44,8 @@ def get_planned_sales_data():
 def get_critical_level():
     """
     Adds a critical level representing the minimum level of stock
-    to be available. The number set by user is an integer which is
+    to be available (share of previous average sales).
+    The number set by the user is an integer which is
     converted into a percentage used in the calculations.
     """
     print("******************************************")
@@ -109,9 +111,10 @@ def validate_critical_level_data(value):
 
 def get_sales_data():
     """
-    Function to let users add sales or similar. The input is validated before
-    values are written to the file to prevent invalid data to be added. If
-    wrong input is entered, the user needs to enter data again.
+    Function to let users add sales, orders or similar. The input is
+    validated before values are written to the file to prevent invalid
+    data to be added. If wrong input is entered, the user
+    needs to enter data again.
     """
     sales_worksheet = SHEET.worksheet("sales")
     headers = sales_worksheet.row_values(1)
@@ -173,7 +176,8 @@ def calculate_surplus_data(sales_row):
     """
     This function displays the latest sales compared to available
     stock.
-    A negative value is the expected quantity to produce.
+    A negative value represents the minimum quantity to produce
+    before including the critical level factor.
     A positive value represents how much is left in stock.
     """
     print("Calculating surplus data...\n")
@@ -209,6 +213,8 @@ def calculate_stock_data(average_sales):
     """
     Calculates requested stock level based on;
     critical level, average sales and latest stock status.
+    The returned value is the result of:
+    average sales * the critical level value.
     """
     print("Calculating stock data...\n")
 
