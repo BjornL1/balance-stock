@@ -440,7 +440,7 @@ CI Python Linter
   -  Initially there was a problem to copy the values from the critical level sheet to the next row if the user entered yes (on the question if the user wants to add more sales data), the values were added three times, but after a review of the logic the issue could be solved.
 
 - Known Bugs/compromise
-  - There are no known bugs, however there was noticed a timeout error related to the gpsreadsheet which seemed to be connected to codeanywhere specifically (the error was not noticed in Heroku). By removing an unnecessary else statement in the "get critical level" code block the issue seems to be resolved, it was not possible to reproduce the problem in codeanywhere. still it could be worth mentioning this scenario if the code were supposed to be run in codeanywhere which seems to be having an impact on the stability in general for the program due to server issues (the latest comment is input from codeanywhere support).
+  - There are no known bugs, however there was a timeout error related to the gpsreadsheet which seemed to be connected to codeanywhere specifically (the error was not noticed in Heroku). By removing an unnecessary else statement in the "get critical level" code block the issue seems to be resolved, it was not possible to reproduce the problem in codeanywhere. still it could be worth mentioning this scenario if the code were supposed to be run in codeanywhere which seems to be having an impact on the stability in general for the program due to server issues (the latest comment is input from codeanywhere support).
     
 
 ## Credits
